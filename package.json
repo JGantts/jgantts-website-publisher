@@ -1,0 +1,15 @@
+{
+  "name": "jgantts-website-publisher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "jgantts-website-publisher"
+  },
+  "author": "Jacob Gantt",
+  "license": "ISC"
+}
