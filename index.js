@@ -1,11 +1,11 @@
 const cron = require('node-cron');
-const fs = require('fs/promises');
 const fsSync = require('fs');
+const fs = fsSync.promises;
 const https = require('https');
-const { exec } = require("child_process");
+const exec = require("child_process").exec;
 const compareVersions = require('compare-versions');
 const tar = require('tar');
-const { randomUUID } = require('crypto')
+const randomUUID = require('crypto').randomUUID;
 
 const websitesDir = `../websites`
 
