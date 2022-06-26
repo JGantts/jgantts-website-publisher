@@ -10,6 +10,16 @@ const randomUUID = require('crypto').randomUUID;
 
 const APP_NAME = "jgantts-website-publisher"
 
+var server = https.createServer(function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    var message = `${APP_NAME} launched.\n`,
+        version = 'NodeJS ' + process.versions.node + '\n',
+        response = [message, version].join('\n');
+    res.end(response);
+});
+server.listen();
+
+
 const log4js = require("log4js");
 log4js.configure({
   appenders: { publish: { type: "file", filename: `${APP_NAME}.log` } },
