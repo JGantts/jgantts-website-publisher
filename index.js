@@ -7,7 +7,7 @@ const compareVersions = require('compare-versions');
 const tar = require('tar');
 const randomUUID = require('crypto').randomUUID;
 
-const websitesDir = `../websites`
+const websitesDir = `../../websites`
 
 async function updateWebsite() {
     const tempPath = `${websitesDir}/temp-${randomUUID()}`;
