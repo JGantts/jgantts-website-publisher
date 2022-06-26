@@ -5,13 +5,19 @@ const https = require('https');
 const { exec } = require("child_process");
 const compareVersions = require('compare-versions');
 const tar = require('tar');
-
-const tempPath = `temp/`;
-const tempFile = `temp.tgz`
+const { randomUUID } = require('crypto')
 
 async function updateWebsite() {
-    const packageRegistry = `https://registry.npmjs.org/${'jgantts.com'}`;
-    const outDir = `../${'jgantts.com'}`;
+    const websitesDir = `../websites`
+    const tempPath = `${websitesDir}/temp-${randomUUID()}`;
+    const tempFile = `temp.tgz`
+
+    const websiteName = 'jgantts.com'
+    const packageRegistry = `https://registry.npmjs.org/${websiteName}`;
+    const outDir = `${websitesDir}/${websiteName}`;
+    const versionFile = `${websitesDir}/${websiteName}.version`
+
+    makeDir(websitesDir)
 
     getJsonFromUri(packageRegistry, async (res) => {
         if (res.error) { console.error(res.message); return; }
@@ -24,35 +30,58 @@ async function updateWebsite() {
             if(highestVersion === null) {
                 highestVersion = version;
             } else {
-                if (compareVersions(highestVersion, version) < 0) {
+                if (compareVersions(highestVersion, version) <= 0) {
                     highestVersion = version;
                 }
             }
         }
+
+        if (!fsSync.existsSync(versionFile)) {
+            await fs.writeFile(versionFile, highestVersion);
+        } else {
+            const installedVersion = (await fs.readFile(versionFile)).toString();
+            if (compareVersions(installedVersion, highestVersion) >= 0) {
+                console.log(`${websiteName} is already up-to-date.`);
+                return;
+            }
+        }
+
         let versionMetadata = packageMatadata.versions[highestVersion];
         console.log(versionMetadata.dist.tarball);
         let tarUrl = versionMetadata.dist.tarball;
 
-        await fs.rm(outDir, { recursive: true });
-        await fs.mkdir(outDir);
+        await cleanDir(outDir)
+        await cleanDir(tempPath)
 
-        if (fsSync.existsSync(tempPath)) {
-            await fs.rm(tempPath, { recursive: true });
-        }
-        await fs.mkdir(tempPath);
-
-        downloadFileFromUri(tarUrl, tempPath + tempFile, async () => {
+        downloadFileFromUri(tarUrl, `${tempPath}/${tempFile}`, async () => {
             tar.x(  // or tar.extract(
                 {
-                    file: tempPath + tempFile,
+                    file: `${tempPath}/${tempFile}`,
                     cwd: tempPath
                 }
-            ).then(_=> {
+            ).then(async _ => {
+                console.log("moving files.");
+                await fs.rename(`${tempPath}/package/`, outDir);
                 console.log("done.");
-                //.. tarball has been dumped in cwd ..
-            })
+                if (fsSync.existsSync(tempPath)) {
+                    await fs.rm(tempPath, { recursive: true });
+                }
+            });
         });
     });
+}
+
+async function makeDir(dir) {
+    if (!fsSync.existsSync(dir)) {
+        await fs.mkdir(dir);
+    }
+}
+
+async function cleanDir(dir) {
+    if (fsSync.existsSync(dir)) {
+        await fs.rm(dir, { recursive: true });
+    }
+    await fs.mkdir(dir);
 }
 
 function downloadFileFromUri(uri, path, then) {
