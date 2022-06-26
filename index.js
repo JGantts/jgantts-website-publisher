@@ -7,8 +7,9 @@ const compareVersions = require('compare-versions');
 const tar = require('tar');
 const { randomUUID } = require('crypto')
 
+const websitesDir = `../websites`
+
 async function updateWebsite() {
-    const websitesDir = `../websites`
     const tempPath = `${websitesDir}/temp-${randomUUID()}`;
     const tempFile = `temp.tgz`
 
