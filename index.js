@@ -8,6 +8,18 @@ const compareVersions = require('compare-versions');
 const tar = require('tar');
 const randomUUID = require('crypto').randomUUID;
 
+const APP_NAME = "jgantts-website-publisher"
+
+const log4js = require("log4js");
+log4js.configure({
+  appenders: { publish: { type: "file", filename: `${APP_NAME}.log` } },
+  categories: { default: { appenders: ["publish"], level: "error" } }
+});
+const logger = log4js.getLogger();
+logger.level = "debug";
+
+logger.debug("Begin Log");
+
 async function updateWebsite() {
     const websitesDir = path.resolve(`../../websites`);
 
@@ -43,13 +55,13 @@ async function updateWebsite() {
         } else {
             const installedVersion = (await fs.readFile(versionFile)).toString();
             if (compareVersions(installedVersion, highestVersion) >= 0) {
-                console.log(`${websiteName} is already up-to-date.`);
+                logger.debug(`${websiteName} is already up-to-date.`);
                 return;
             }
         }
 
         let versionMetadata = packageMatadata.versions[highestVersion];
-        console.log(versionMetadata.dist.tarball);
+        logger.debug(versionMetadata.dist.tarball);
         let tarUrl = versionMetadata.dist.tarball;
 
         await cleanDir(outDir)
@@ -62,12 +74,13 @@ async function updateWebsite() {
                     cwd: tempPath
                 }
             ).then(async _ => {
-                console.log("moving files.");
+                logger.debug("moving files.");
                 await fs.rename(`${tempPath}/package/`, outDir);
-                console.log("done.");
+                logger.debug("done.");
                 if (fsSync.existsSync(tempPath)) {
                     await fs.rm(tempPath, { recursive: true });
                 }
+                await fs.writeFile(versionFile, highestVersion);
             });
         });
     });
@@ -102,8 +115,8 @@ function downloadFileFromUri(uri, path, then) {
             `Expected application/octet-stream but received ${contentType}`);
         }
         if (err) {
-            console.error(err);
-            console.error(err.message);
+            logger.debug(err);
+            logger.debug(err.message);
             // Consume response data to free up memory
             res.resume();
             then({
@@ -114,14 +127,14 @@ function downloadFileFromUri(uri, path, then) {
             return;
         }
 
-        console.log(uri)
-        console.log(path)
+        logger.debug(uri)
+        logger.debug(path)
 
         const filePath = fsSync.createWriteStream(path);
         res.pipe(filePath);
         filePath.on('finish',() => {
             filePath.close();
-            console.log('Download Completed');
+            logger.debug('Download Completed');
             then({
                 error: false,
                 continue: true,
@@ -132,11 +145,11 @@ function downloadFileFromUri(uri, path, then) {
 
         res.on('end', () => {
             try {
-                console.log('connection closed');
+                logger.debug('connection closed');
                 return;
             } catch (err) {
-                console.error(err);
-                console.error(err.message);
+                logger.debug(err);
+                logger.debug(err.message);
                 then({
                     error: true,
                     continue: false,
@@ -146,8 +159,8 @@ function downloadFileFromUri(uri, path, then) {
             }
         });
     }).on('error', (err) => {
-        console.error(err);
-        console.error(`Got error: ${err.message}`);
+        logger.debug(err);
+        logger.debug(`Got error: ${err.message}`);
         then({
             error: true,
             continue: false,
@@ -173,8 +186,8 @@ function getJsonFromUri(uri, then) {
             `Expected application/json but received ${contentType}`);
         }
         if (err) {
-            console.error(err);
-            console.error(err.message);
+            logger.debug(err);
+            logger.debug(err.message);
             // Consume response data to free up memory
             res.resume();
             then({
@@ -200,8 +213,8 @@ function getJsonFromUri(uri, then) {
                 });
                 return;
             } catch (err) {
-                console.error(err);
-                console.error(err.message);
+                logger.debug(err);
+                logger.debug(err.message);
                 then({
                     error: true,
                     continue: false,
@@ -212,8 +225,8 @@ function getJsonFromUri(uri, then) {
             }
         });
     }).on('error', (err) => {
-        console.error(err);
-        console.error(`Got error: ${err.message}`);
+        logger.debu(err);
+        logger.debug(`Got error: ${err.message}`);
         then({
             error: true,
             continue: false,
