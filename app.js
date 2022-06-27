@@ -91,6 +91,7 @@ async function updateWebsite() {
                     await fs.rm(tempPath, { recursive: true });
                 }
                 await fs.writeFile(versionFile, highestVersion);
+                await fs.writeFile(`temp/restart.txt`, highestVersion);
             });
         });
     });
