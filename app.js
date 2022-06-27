@@ -31,7 +31,7 @@ logger.level = "debug";
 logger.debug("Begin Log");
 
 async function updateWebsite() {
-    exec('npm -v', function(error, stdout, stderr){ console.log(stdout) });
+    exec('npm -v', function(error, stdout, stderr){ logger.debug(stdout) });
     const websitesDir = path.resolve(`../../websites`);
 
     const tempPath = `${websitesDir}/temp-${randomUUID()}`;
