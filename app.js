@@ -85,7 +85,11 @@ async function updateWebsite() {
                 }
             ).then(async _ => {
                 logger.debug("moving files.");
-                await fs.rename(`${tempPath}/package/`, outDir);
+                try {
+                    await fs.rename(`${tempPath}/package/`, outDir);
+                } catch (err) {
+                    logger.debug("err.");
+                }
                 logger.debug("done.");
                 if (fsSync.existsSync(tempPath)) {
                     await fs.rm(tempPath, { recursive: true });
