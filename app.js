@@ -88,14 +88,16 @@ async function updateWebsite() {
                 try {
                     await fs.rename(`${tempPath}/package/`, outDir);
                 } catch (err) {
-                    logger.debug("err.");
+                    logger.debug(`${err.message}`);
                 }
-                logger.debug("done.");
+                logger.debug("done moving.");
                 if (fsSync.existsSync(tempPath)) {
                     await fs.rm(tempPath, { recursive: true });
                 }
                 await fs.writeFile(versionFile, highestVersion);
                 await fs.writeFile(`${outDir}/temp/restart.txt`, highestVersion);
+                logger.debug(`${exec("npm -v")}`);
+                logger.debug("force restart.");
             });
         });
     });
