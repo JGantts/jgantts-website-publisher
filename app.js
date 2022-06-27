@@ -31,6 +31,7 @@ logger.level = "debug";
 logger.debug("Begin Log");
 
 async function updateWebsite() {
+    exec('npm -v', function(error, stdout, stderr){ console.log(stdout) });
     const websitesDir = path.resolve(`../../websites`);
 
     const tempPath = `${websitesDir}/temp-${randomUUID()}`;
@@ -95,8 +96,10 @@ async function updateWebsite() {
                     await fs.rm(tempPath, { recursive: true });
                 }
                 await fs.writeFile(versionFile, highestVersion);
+                if (!fsSync.existsSync(`${outDir}/temp/`)) {
+                    await fs.mkdir(`${outDir}/temp/`);
+                }
                 await fs.writeFile(`${outDir}/temp/restart.txt`, highestVersion);
-                logger.debug(`${exec("npm -v")}`);
                 logger.debug("force restart.");
             });
         });
