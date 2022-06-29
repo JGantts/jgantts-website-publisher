@@ -43,6 +43,7 @@ if (!cluster.isMaster) {
 
     const cron = require('node-cron');
     const fsSync = require('fs');
+    const https = require('https');
     const fs = fsSync.promises;
     const exec = require('child_process').exec;
     const path = require('path');
@@ -56,7 +57,7 @@ if (!cluster.isMaster) {
     cron.schedule('* * * * *', checkStatusandVersion);
 
     async function checkStatusandVersion() {
-        logger.debug(`checkStatusandVersion`);
+        logger.debug(`check version and status`);
         await checkVersion();
         await checkStatus();
     }
@@ -73,19 +74,10 @@ if (!cluster.isMaster) {
     }
 
     async function checkVersion() {
-        console.log("check version");
 
-
-        console.log("what?");
         const packageRegistry = `https://registry.npmjs.org/${websiteName}`;
-        //const outDir = `${websitesDir}/${websiteName}`;
-        const versionFile = `${APP_NAME}/${websiteName}.version`
-        console.log("what?");
 
-        console.log(packageRegistry);
-        console.log("what?");
         getJsonFromUri(packageRegistry, async (res) => {
-            console.log(res);
             if (res.error) { console.error(res.message); return; }
             else if (!res.continue) { console.error(res.message); return; }
 
@@ -101,14 +93,15 @@ if (!cluster.isMaster) {
                     }
                 }
             }
-            console.log(highestVersion);
 
-            if (!fsSync.existsSync(versionFile)) {
-                await fs.writeFile(versionFile, highestVersion);
-            } else {
-                const installedVersion = (await fs.readFile(versionFile)).toString();
+            let packageFile = `node_modules/${websiteName}/package.json`;
+
+            if (fsSync.existsSync(packageFile)) {
+                const packageFileSting = (await fs.readFile(packageFile)).toString();
+                const packageFileJson = JSON.parse(packageFileSting);
+                const installedVersion = packageFileJson.version;
                 if (compareVersions(installedVersion, highestVersion) >= 0) {
-                    logger.debug(`${websiteName} is already up-to-date.`);
+                    logger.debug(`${websiteName} is already up-to-date @${highestVersion}.`);
                     return;
                 }
             }
@@ -125,7 +118,9 @@ if (!cluster.isMaster) {
     }
 
     function getJsonFromUri(uri, then) {
+        console.log("getJsonFromUri");
         https.get(uri, (res) => {
+            console.log("response");
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
