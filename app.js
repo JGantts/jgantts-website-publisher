@@ -5,6 +5,8 @@ const log4js = require('log4js');
 const APP_NAME = "jgantts-website-publisher"
 const websiteName = 'jgantts.com'
 
+process.env.NODE_SITE_PUB_ENV = 'prod';
+
 log4js.configure({
     appenders: { publish: { type: "file", filename: `${APP_NAME}.log` } },
     categories: { default: { appenders: ["publish"], level: "error" } }
@@ -65,8 +67,7 @@ if (!cluster.isMaster) {
     async function checkStatus() {
         if (currentSite.isDead()) {
             currentSite = cluster.fork();
-        }
-        if (!currentSite.isAlive()) {
+        } else if (!currentSite.isAlive()) {
             let newSite = cluster.fork();
             await currentSite.kill();
             currentSite = newSite;
