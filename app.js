@@ -38,7 +38,8 @@ if (!cluster.isMaster) {
     let site;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
-        site = require('jgantts.com')
+        site = require('jgantts.com');
+        delete require.cache[require.resolve('jgantts.com')];
         site.start();
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
@@ -112,8 +113,9 @@ if (!cluster.isMaster) {
     async function restartWorker(oldWorkerBody) {
         return new Promise(function(resolve, reject) {
             onFork = (newWorker, code, signal) => {
-                onExit = (discWorker, code, signal) => {
-                    logger.debug(`Worker ${discWorker.process.pid} exit.`);
+                onDisconnect = (discWorker, code, signal) => {
+                    logger.debug(`Worker ${discWorker.process.pid} disconnect.`);
+                    workerBody[discWorker.id].worker.kill();
                     delete workerBodies[discWorker.id]
                     workerBodies[newWorker.id] = newWorker;
                     resolve();
@@ -121,6 +123,7 @@ if (!cluster.isMaster) {
                 oldWorkerBody.worker.disconnect();
            };
         });
+        fork();
     }
 
     async function checkStatusandVersion() {
