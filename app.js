@@ -3,46 +3,63 @@ const cluster = require('cluster');
 const log4js = require('log4js');
 
 const APP_NAME = "jgantts-website-publisher"
-const websiteName = 'jgantts.com'
+const WEBSITE_NAME = 'jgantts.com'
+const WORKER_TOTAL = 4;
 
 process.env.NODE_SITE_PUB_ENV = 'prod';
 
+
 log4js.configure({
-    appenders: { publish: { type: "file", filename: `${APP_NAME}.log` } },
-    categories: { default: { appenders: ["publish"], level: "error" } }
+    appenders: {
+        out: {
+            type: "stdout",
+            layout: {
+                type: "pattern",
+                pattern: "%d{hh.mm.ss} %p %c %m"
+            }
+        },
+        publish: {
+             type: "file", filename: `${APP_NAME}.log`,
+             layout: {
+                 type: "pattern",
+                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
+             }
+         }
+     },
+    categories: { default: { appenders: ["publish", "out"], level: "debug" } }
 });
 const logger = log4js.getLogger();
 logger.level = "debug";
 logger.debug(`Begin Log ${APP_NAME} ${process.pid}${cluster.isMaster ? ": Master" : ""}`);
 
-//Worker  (site)
+
+//Worker (site)
 if (!cluster.isMaster) {
+    let site;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
-        require('jgantts.com').start();
+        site = require('jgantts.com')
+        site.start();
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);
-        logger.debug(`z`);
+        logger.debug(`${err.message}`);
     }
+
+    process.on('message', async function(msg) {
+        let heartbeat = await site.isAlive();
+        switch (msg.type){
+            case 'heartbeat':
+            process.send({
+                type: 'heartbeat',
+                content: heartbeat
+            });
+            break;
+        }
+    });
 
 //Master (balancer)
 } else {
-    logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
-    logger.debug(`NodeJS ${process.versions.node}`);
-
-    let currentSite = cluster.fork();
-
-    cluster.on('fork', (worker, code, signal) => {
-        logger.debug(`Worker ${worker.process.pid} forked`);
-    });
-
-    cluster.on('exit', (worker, code, signal) => {
-        logger.debug(`Worker ${worker.process.pid} died.`);
-        logger.debug(`Restarting server...`);
-        currentSite = cluster.fork();
-    });
-
     const cron = require('node-cron');
     const fsSync = require('fs');
     const https = require('https');
@@ -50,13 +67,61 @@ if (!cluster.isMaster) {
     const exec = require('child_process').exec;
     const path = require('path');
     const compareVersions = require('compare-versions');
-    const tar = require('tar');
-    const randomUUID = require('crypto').randomUUID;
-    const express = require('express');
 
-    const APP_NAME = "jgantts-website-publisher";
+    logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
+    logger.debug(`NodeJS ${process.versions.node}`);
 
-    cron.schedule('* * * * *', checkStatusandVersion);
+    let workerBodies = new Object();
+
+
+
+    let onFork = (worker, code, sig) => {
+        logger.debug(`Worker ${worker.process.pid} fork.`);
+        let workerBody = {worker: worker, heartbeat: false};
+        workerBodies[worker.id] = workerBody;
+        worker.on('message', async (msg) => {
+            switch (msg.type){
+                case "heartbeat":
+                logger.debug(`heartbeat = ${msg.content}`)
+                workerBody.heartbeat = msg.content;
+                break;
+            }
+        });
+    };
+    let onDisconnect = (worker, code, sig) => {logger.debug(`Worker ${worker.process.pid} disconnect.`);};
+    let onExit = (worker, code, sig) => {logger.debug(`Worker ${worker.process.pid} exit.`);};
+
+    cluster.on('fork', onFork);
+    cluster.on('disconnect', onDisconnect);
+    cluster.on('exit', (worker, code, signal) => onExit);
+
+    for (let i = 0; i < WORKER_TOTAL; i++) {
+        cluster.fork();
+    }
+
+
+
+    async function restartWorkers() {
+        logger.debug("restartWorkers")
+        Object.keys(workerBodies).forEach(async (workerKey) => {
+            await restartWorker(workerBodies[workerKey]);
+        });
+        logger.debug("done restartWorkers")
+    }
+
+    async function restartWorker(oldWorkerBody) {
+        return new Promise(function(resolve, reject) {
+            onFork = (newWorker, code, signal) => {
+                onExit = (discWorker, code, signal) => {
+                    logger.debug(`Worker ${discWorker.process.pid} exit.`);
+                    delete workerBodies[discWorker.id]
+                    workerBodies[newWorker.id] = newWorker;
+                    resolve();
+                }
+                oldWorkerBody.worker.disconnect();
+           };
+        });
+    }
 
     async function checkStatusandVersion() {
         logger.debug(`check version and status`);
@@ -65,18 +130,28 @@ if (!cluster.isMaster) {
     }
 
     async function checkStatus() {
-        if (currentSite.isDead()) {
-            currentSite = cluster.fork();
-        } else if (!currentSite.isAlive()) {
-            let newSite = cluster.fork();
-            await currentSite.kill();
-            currentSite = newSite;
-        }
+        Object.keys(workerBodies).forEach(async (workerKey) => {
+            let workerBody = workerBodies[workerKey]
+            if (workerBody.worker.isDead()) {
+                await restartWorker(workerBody);
+            } else {
+                workerBody.heartbeat = false;
+                workerBody.worker.send({type: "heartbeat"});
+                await delay(1000);
+                if (!workerBody.heartbeat) {
+                    await restartWorker(workerBody);
+                }
+            }
+        });
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function checkVersion() {
 
-        const packageRegistry = `https://registry.npmjs.org/${websiteName}`;
+        const packageRegistry = `https://registry.npmjs.org/${WEBSITE_NAME}`;
 
         getJsonFromUri(packageRegistry, async (res) => {
             if (res.error) { console.error(res.message); return; }
@@ -95,33 +170,30 @@ if (!cluster.isMaster) {
                 }
             }
 
-            let packageFile = `node_modules/${websiteName}/package.json`;
+            let packageFile = `node_modules/${WEBSITE_NAME}/package.json`;
 
             if (fsSync.existsSync(packageFile)) {
                 const packageFileSting = (await fs.readFile(packageFile)).toString();
                 const packageFileJson = JSON.parse(packageFileSting);
                 const installedVersion = packageFileJson.version;
                 if (compareVersions(installedVersion, highestVersion) >= 0) {
-                    logger.debug(`${websiteName} is already up-to-date @${highestVersion}.`);
+                    logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
                     return;
                 }
             }
 
-            exec(`npm install ${websiteName}`, async function(error, stdout, stderr){
-                console.log("here");
-                console.log(stdout);
-                console.log(stderr);
-                let newSite = cluster.fork();
-                await currentSite.kill();
-                currentSite = newSite;
+            exec(`npm install ${WEBSITE_NAME}`, async function(error, stdout, stderr){
+                logger.debug("here");
+                logger.debug(stdout);
+                logger.debug(stderr);
+                restartWorkers();
              });
         });
     }
 
     function getJsonFromUri(uri, then) {
-        console.log("getJsonFromUri");
         https.get(uri, (res) => {
-            console.log("response");
+            logger.debug("response");
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
@@ -175,7 +247,7 @@ if (!cluster.isMaster) {
                 }
             });
         }).on('error', (err) => {
-            logger.debu(err);
+            logger.debug(err);
             logger.debug(`Got error: ${err.message}`);
             then({
                 error: true,
@@ -186,4 +258,7 @@ if (!cluster.isMaster) {
             return;
         });
     }
+
+    cron.schedule('* * * * *', checkStatusandVersion);
+    checkStatusandVersion();
 }
