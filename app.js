@@ -49,15 +49,13 @@ let workerBodies = new Object();
 let initilize = async () => {
     await startWorkers();
 
-    var options = {
-      changeOrigin: true,
-      target: {
-          https: true
-      }
-    }
+    var httpsRedirectServer = express();
+    httpsRedirectServer.get('*', function(req, res) {
+        res.redirect('https://' + req.headers.host + req.url);
+    })
+    httpsRedirectServer.listen(80);
 
-//    httpProxy.createServer(443, '127.0.0.1', options).listen(8070);
-    let proxy = httpProxy.createProxyServer();
+    let loadBalancerPoxy = httpProxy.createProxyServer();
 
     http.createServer(function (req, res) {
         let keys = Object.keys(workerBodies);
@@ -66,8 +64,8 @@ let initilize = async () => {
         let port = workerBody.port;
         let target = {host: '127.0.0.1', port: port};
         logger.debug(`port: ${port}`);
-        proxy.web(req, res, { target });
-    }).listen(8070);
+        loadBalancerPoxy.web(req, res, { target });
+    }).listen(443);
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
@@ -89,7 +87,6 @@ let restartWorkers = async () => {
 let restartWorker = (oldWorkerBody) => {
     return new Promise(async (resolve, reject) => {
         if (oldWorkerBody !== null) {
-            oldWorkerBody.active = false;
             await killWorker(oldWorkerBody);
         }
         await startWorker();
@@ -99,6 +96,7 @@ let restartWorker = (oldWorkerBody) => {
 
 let killWorker = (workerBody) => {
     return new Promise(async (resolve, reject) => {
+        oldWorkerBody.active = false;
         workerBody.shutdownCallback = resolve;
         workerBody.worker.send({type: 'shutdown'});
     });
