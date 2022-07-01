@@ -12,6 +12,14 @@ const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
 
+let workerBodies = new Object();
+
+process.on('exit', async (code) => {
+    Object.keys(workerBodies).forEach(async (workerKey) => {
+        await killWorker(workerBodies[workerKey]);
+    });
+});
+
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
@@ -45,8 +53,6 @@ logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
 logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
-let workerBodies = new Object();
-
 let initilize = async () => {
     await startWorkers();
 
@@ -76,7 +82,7 @@ let initilize = async () => {
 
 let startWorkers = async () => {
     for (let i = 0; i < WORKER_TOTAL; i++) {
-        await restartWorker(null);
+        await startWorker();
     }
 }
 
@@ -151,6 +157,7 @@ let startWorker = async () => {
             break;
 
             case "shutdown":
+                workerBody.worker.kill();
                 workerBody.shutdownCallback();
             break;
         }
