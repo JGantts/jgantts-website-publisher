@@ -34,8 +34,42 @@ const logger = log4js.getLogger();
 logger.level = "debug";
 logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
 
+let site;
+
+let receivedMessage = async (msg) => {
+    logger.debug(`Received ${msg.type}`);
+    switch (msg.type){
+        case 'heartbeat':
+        let heartbeat = await site.heartbeat();
+        process.send({
+            type: 'heartbeat',
+            content: { heartbeat: heartbeat }
+        });
+        break;
+
+        case 'shutdown':
+        await site.close();
+        await fs.rm(siteDir)
+        process.send({
+            type: 'shutdown',
+            content: { success: true }
+        });
+        break;
+
+        case 'port':
+        let port = await site.port();
+        process.send({
+            type: 'port',
+            content: {
+                success: true,
+                port: port
+             }
+        });
+        break;
+    }
+}
+
 let initSite = async () => {
-    let site;
     let uuid = randomUUID();
     let siteDir = `../websites/${WEBSITE_NAME}-${uuid}/`;
     logger.debug(`Node Site #${process.pid} starting.`);
@@ -45,38 +79,21 @@ let initSite = async () => {
         await install(siteDir);
 
         site = require(siteDir);
+        process.on('message', receivedMessage);
         site.start();
         logger.debug('launched');
         let heartbeat = await site.heartbeat();
         if (!heartbeat) {
             throw new Error('Heart failed to start.');
         }
-        logger.debug(heartbeat);
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);
         logger.debug(`${err.message}`);
     }
-
-    process.on('message', async function(msg) {
-        switch (msg.type){
-            case 'heartbeat':
-            let heartbeat = await site.heartbeat();
-            process.send({
-                type: 'heartbeat',
-                content: { heartbeat: heartbeat }
-            });
-            break;
-
-            case 'shutdown':
-            await site.close();
-            await fs.rm(siteDir)
-            process.send({
-                type: 'shutdown',
-                content: { success: true }
-            });
-            break;
-        }
+    process.send({
+        type: 'start',
+        content: { success: true }
     });
 };
 

@@ -1,10 +1,11 @@
-//Master (balancer) and Worker (sites)
 const { fork } = require('child_process');
 const log4js = require('log4js');
 const randomUUID = require('crypto').randomUUID;
 const cron = require('node-cron');
 const fsSync = require('fs');
+const http = require('http');
 const https = require('https');
+const httpProxy = require('http-proxy');
 const fs = fsSync.promises;
 const exec = require('child_process').exec;
 const path = require('path');
@@ -35,6 +36,7 @@ log4js.configure({
     },
     categories: { default: { appenders: ["publish", "out"], level: "debug" } }
 });
+
 const logger = log4js.getLogger();
 logger.level = "debug";
 logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
@@ -46,8 +48,28 @@ let workerBodies = new Object();
 
 let initilize = async () => {
     await startWorkers();
+
+    var options = {
+      changeOrigin: true,
+      target: {
+          https: true
+      }
+    }
+
+//    httpProxy.createServer(443, '127.0.0.1', options).listen(8070);
+    let proxy = httpProxy.createProxyServer();
+
+    http.createServer(function (req, res) {
+        let keys = Object.keys(workerBodies);
+        let keyIndex = Math.floor(Math.random() * keys.length);
+        let workerBody = workerBodies[keys[keyIndex]];
+        let port = workerBody.port;
+        let target = {host: '127.0.0.1', port: port};
+        logger.debug(`port: ${port}`);
+        proxy.web(req, res, { target });
+    }).listen(8070);
+
     cron.schedule('* * * * *', checkStatusandVersion);
-    checkStatusandVersion();
 };
 
 let startWorkers = async () => {
@@ -67,6 +89,7 @@ let restartWorkers = async () => {
 let restartWorker = (oldWorkerBody) => {
     return new Promise(async (resolve, reject) => {
         if (oldWorkerBody !== null) {
+            oldWorkerBody.active = false;
             await killWorker(oldWorkerBody);
         }
         await startWorker();
@@ -77,22 +100,48 @@ let restartWorker = (oldWorkerBody) => {
 let killWorker = (workerBody) => {
     return new Promise(async (resolve, reject) => {
         workerBody.shutdownCallback = resolve;
-        workerBody.worker.send('shutdown');
+        workerBody.worker.send({type: 'shutdown'});
+    });
+}
+
+let getPortPromise = (worker) => {
+    return new Promise(async (resolve, reject) => {
+        logger.debug('Getting port');
+        worker.on('message', (msg) => {
+            switch (msg.type){
+                case "port":
+                if (msg.content.success) {
+                    logger.debug(`Listening on port ${msg.content.port}`);
+                    resolve(msg.content.port);
+                } else {
+                    reject();
+                }
+                break;
+
+                default:
+                reject();
+                break;
+            }
+        });
+        worker.send({type: 'port'});
     });
 }
 
 let startWorker = async () => {
-    let newWorker = fork('./worker.js');
+    let newWorker = await startWorkerPromise();
     logger.debug(`Worker ${newWorker.pid} fork.`);
+    let port = await getPortPromise(newWorker);
     let workerBody = {
         uuid: randomUUID(),
         worker: newWorker,
+        active: true,
+        port: port,
+        activeConnections: 0,
         heartbeat: false,
         shutdownCallback: () => {}
     };
     newWorker.on('message', async (msg) => {
-        logger.debug(`${msg.type}`)
-        logger.debug(JSON.stringify(msg.content))
+        logger.debug(`${msg.type}`);
         switch (msg.type){
             case "heartbeat":
             logger.debug(`heartbeat = ${msg.content.heartbeat}`)
@@ -108,6 +157,24 @@ let startWorker = async () => {
         logger.debug(err.message);
     });
     workerBodies[workerBody.uuid] = workerBody;
+}
+
+let startWorkerPromise = () => {
+    return new Promise(async (resolve, reject) => {
+        let newWorker = fork('./worker.js');
+        newWorker.on('message', async (msg) => {
+            logger.debug(`${msg.type}`);
+            switch (msg.type){
+                case "start":
+                resolve(newWorker);
+                break;
+
+                default:
+                reject();
+                break;
+            }
+        });
+    });
 }
 
 let checkStatusandVersion = async () => {
