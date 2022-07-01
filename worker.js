@@ -35,6 +35,7 @@ logger.level = "debug";
 logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
 
 let site;
+let siteDir;
 
 let receivedMessage = async (msg) => {
     logger.debug(`Received ${msg.type}`);
@@ -48,7 +49,7 @@ let receivedMessage = async (msg) => {
         break;
 
         case 'shutdown':
-        await site.close();
+        await site.shutdown();
         await fs.rm(siteDir)
         process.send({
             type: 'shutdown',
@@ -71,7 +72,7 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    let siteDir = `../websites/${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `../websites/${WEBSITE_NAME}-${uuid}/`;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
@@ -111,5 +112,7 @@ let install = (siteDir) => {
         });
     });
 }
+
+
 
 initSite();
