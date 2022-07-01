@@ -54,7 +54,6 @@ logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
-    await startWorkers();
 
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
@@ -71,13 +70,26 @@ let initilize = async () => {
 
     http.createServer(function (req, res) {
         let keys = Object.keys(workerBodies);
-        let keyIndex = Math.floor(Math.random() * keys.length);
-        let workerBody = workerBodies[keys[keyIndex]];
-        let port = workerBody.port;
-        let target = {host: '127.0.0.1', port: port};
-        logger.debug(`port: ${port}`);
-        loadBalancerPoxy.web(req, res, { target });
+        if (keys.length > 0) {
+            let keyIndex = Math.floor(Math.random() * keys.length);
+            let workerBody = workerBodies[keys[keyIndex]];
+            let port = workerBody.port;
+            let target = {host: '127.0.0.1', port: port};
+            logger.debug(`port: ${port}`);
+            loadBalancerPoxy.web(req, res, { target });
+        } else {
+            res.writeHead(500, {'Content-Type': 'text/html'});
+            res.write("<p>500 - Server Error</p>");
+            res.write("<p>It's not you it's us.</p>");
+            res.write("<p>Server may be booting.</p>");
+            res.write("<p>Please try again in a few minutes.</p>");
+            res.end();
+        }
     }).listen(HTTP_PORT);
+
+    await startWorkers();
+
+    checkStatusandVersion();
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
@@ -251,7 +263,7 @@ let checkVersion = async () => {
         }
 
         logger.debug(`Updating ${WEBSITE_NAME} module`);
-        exec(`npm install ${WEBSITE_NAME}`, async function(error, stdout, stderr){
+        exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async function(error, stdout, stderr){
         logger.debug(`Done updating ${WEBSITE_NAME} module`);
             logger.debug(stdout);
             logger.debug(stderr);
