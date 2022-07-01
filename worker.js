@@ -50,7 +50,7 @@ let receivedMessage = async (msg) => {
 
         case 'shutdown':
         await site.shutdown();
-        await fs.rm(siteDir)
+        await fs.remove(siteDir);
         process.send({
             type: 'shutdown',
             content: { success: true }
