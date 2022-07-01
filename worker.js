@@ -84,12 +84,13 @@ let initSite = async () => {
         logger.debug('launched');
         let heartbeat = await site.heartbeat();
         if (!heartbeat) {
-            throw new Error('Heart failed to start.');
+            logger.debug(`Heart failed to start.`);
+            throw new Error();
         }
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);
-        logger.debug(`${err.message}`);
+        logger.debug(`${err?.message}`);
     }
     process.send({
         type: 'start',
