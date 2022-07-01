@@ -108,8 +108,11 @@ let restartWorker = (oldWorkerBody) => {
 
 let killWorker = (workerBody) => {
     return new Promise(async (resolve, reject) => {
-        oldWorkerBody.active = false;
-        workerBody.shutdownCallback = resolve;
+        workerBody.active = false;
+        workerBody.shutdownCallback = () => {
+            delete workerBodies[workerBody.uuid];
+            resolve();
+        };
         workerBody.worker.send({type: 'shutdown'});
     });
 }
