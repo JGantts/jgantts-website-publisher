@@ -50,11 +50,14 @@ let workerBodies = new Object();
 let initilize = async () => {
     await startWorkers();
 
+    const HTTP_PORT = 80;
+    const HTTPS_PORT = 443;
+
     var httpsRedirectServer = express();
     httpsRedirectServer.get('*', function(req, res) {
         res.redirect('https://' + req.headers.host + req.url);
     })
-    httpsRedirectServer.listen(80);
+    httpsRedirectServer.listen(HTTP_PORT);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
@@ -66,7 +69,7 @@ let initilize = async () => {
         let target = {host: '127.0.0.1', port: port};
         logger.debug(`port: ${port}`);
         loadBalancerPoxy.web(req, res, { target });
-    }).listen(443);
+    }).listen(HTTPS_PORT);
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
