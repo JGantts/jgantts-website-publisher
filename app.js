@@ -59,11 +59,13 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-    var httpsRedirectServer = express();
-    httpsRedirectServer.get('*', function(req, res) {
-        res.redirect('https://' + req.headers.host + req.url);
-    })
-    httpsRedirectServer.listen(HTTP_PORT);
+    // var httpsRedirectServer = express();
+    // httpsRedirectServer.get('*', function(req, res) {
+    //     if (!req.secure) {
+    //         res.redirect('https://' + req.headers.host + req.url);
+    //     }
+    // })
+    // httpsRedirectServer.listen(HTTP_PORT);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
