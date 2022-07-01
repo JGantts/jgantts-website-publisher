@@ -77,7 +77,7 @@ let initilize = async () => {
         let target = {host: '127.0.0.1', port: port};
         logger.debug(`port: ${port}`);
         loadBalancerPoxy.web(req, res, { target });
-    }).listen(HTTPS_PORT);
+    }).listen(HTTP_PORT);
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
