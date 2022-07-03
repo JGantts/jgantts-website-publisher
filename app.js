@@ -85,7 +85,7 @@ let initilize = async () => {
             res.write("<p>Please try again in a few minutes.</p>");
             res.end();
         }
-    }).listen(HTTP_PORT);
+    }).listen(8080);
 
     await startWorkers();
 
