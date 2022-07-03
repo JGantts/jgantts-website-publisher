@@ -85,7 +85,7 @@ let initilize = async () => {
             res.write("<p>Please try again in a few minutes.</p>");
             res.end();
         }
-    }).listen(3000);
+    }).listen();
 
     await startWorkers();
 
