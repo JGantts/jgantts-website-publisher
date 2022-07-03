@@ -2,7 +2,7 @@
 const { fork } = require('child_process');
 const log4js = require('log4js');
 const fs = require('fs-extra');
-const randomUUID = require('crypto').randomUUID;
+const randomUUID = require('uuid').v4;
 const exec = require('child_process').exec;
 
 const APP_NAME = "jgantts-website-publisher"
@@ -86,7 +86,7 @@ let initSite = async () => {
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);
-        logger.debug(`${err?.message}`);
+        logger.debug(`${err.message}`);
     }
     let heartbeat = await site.heartbeat();
     if (!heartbeat) {

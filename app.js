@@ -1,6 +1,6 @@
 const { fork } = require('child_process');
 const log4js = require('log4js');
-const randomUUID = require('crypto').randomUUID;
+const randomUUID = require('uuid').v4;
 const cron = require('node-cron');
 const fsSync = require('fs');
 const http = require('http');
