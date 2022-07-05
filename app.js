@@ -25,27 +25,6 @@ const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
 
-log4js.configure({
-    appenders: {
-        out: {
-            type: "stdout",
-            layout: {
-                type: "pattern",
-                pattern: "%d{hh.mm.ss} [main] %p %c %m"
-            }
-        },
-        publish: {
-            type: "file", filename: `${APP_NAME}.log`,
-            mode: "666",
-            layout: {
-                type: "pattern",
-                pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
-            }
-        }
-    },
-    categories: { default: { appenders: ["publish", "out"], level: "debug" } }
-});
-
 const logger = log4js.getLogger();
 logger.level = "debug";
 logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
@@ -58,6 +37,28 @@ let initilize = async () => {
         fs.mkdirSync(config.security.workingDir, { recursive: true });
     }
     process.chdir(config.security.workingDir);
+
+    log4js.configure({
+        appenders: {
+            out: {
+                type: "stdout",
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{hh.mm.ss} [main] %p %c %m"
+                }
+            },
+            publish: {
+                type: "file", filename: `${APP_NAME}.log`,
+                mode: "666",
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
+                }
+            }
+        },
+        categories: { default: { appenders: ["publish", "out"], level: "debug" } }
+    });
+
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
