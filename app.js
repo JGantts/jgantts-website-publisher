@@ -105,6 +105,13 @@ let initilize = async () => {
 
 log4js.configure({
     appenders: {
+        out: {
+            type: "stdout",
+            layout: {
+                type: "pattern",
+                pattern: "%d{hh.mm.ss} %p %c %m"
+            }
+        },
         publish: {
             type: 'file', filename: 'home/nodejsapp/logs/main-root.log',
             layout: {
@@ -113,7 +120,7 @@ log4js.configure({
             }
         }
     },
-    categories: { default: { appenders: ["publish"], level: "debug" } }
+    categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
 });
 logger.level = 'debug';
 
@@ -127,6 +134,13 @@ if (process.getuid() === 0){
 
 log4js.configure({
     appenders: {
+        out: {
+            type: "stdout",
+            layout: {
+                type: "pattern",
+                pattern: "%d{hh.mm.ss} %p %c %m"
+            }
+        },
         publish: {
             type: 'file', filename: 'home/nodejsapp/logs/main-leastprivilegeduser.log',
             layout: {
@@ -135,7 +149,7 @@ log4js.configure({
             }
         }
     },
-    categories: { default: { appenders: ['publish'], level: 'debug' } }
+    categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
 });
 logger.level = 'debug';
 
