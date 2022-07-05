@@ -53,28 +53,14 @@ logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
 
-    const HTTP_PORT = 80;
-    const HTTPS_PORT = 443;
-
-    let LISTENING_PORT;
-    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
-        LISTENING_PORT = 8080;
-    } else {
-        LISTENING_PORT = HTTPS_PORT;
-        var httpsRedirectServer = express();
-        httpsRedirectServer.get('*', function(req, res) {
-            if (!req.secure) {
-                res.redirect('https://' + req.headers.host + req.url);
-            }
-        })
-        httpsRedirectServer.listen(HTTP_PORT);
-    }
-
-
-
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
+    let port = process.env.PORT | 8080;
+
     http.createServer(function (req, res) {
+        if (!req.secure) {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
         let keys = Object.keys(workerBodies);
         if (keys.length > 0) {
             let keyIndex = Math.floor(Math.random() * keys.length);
@@ -91,7 +77,7 @@ let initilize = async () => {
             res.write("<p>Please try again in a few minutes.</p>");
             res.end();
         }
-    }).listen(LISTENING_PORT);
+    }).listen(port);
 
     await startWorkers();
 
