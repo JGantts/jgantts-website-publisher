@@ -54,7 +54,7 @@ logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
-    await fs.ensureDir(config.security.workingDir);
+    await fs.ensureDir(config.security.workingDir, { mode: 666 });
     process.chdir(config.security.workingDir);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
