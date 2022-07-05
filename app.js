@@ -35,7 +35,7 @@ log4js.configure({
             }
         },
         publish: {
-            type: "file", filename: `${config.security.logPath}/${APP_NAME}-root.log`,
+            type: "file", filename: `${config.security.logPath}/${APP_NAME}-main-root.log`,
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
@@ -118,7 +118,7 @@ let initilize = async () => {
                 }
             },
             publish: {
-                type: "file", filename: `${config.security.logPath}/${APP_NAME}-${config.security.leastprivilegeduser}.log`,
+                type: "file", filename: `${config.security.logPath}/${APP_NAME}-main-${config.security.leastprivilegeduser}.log`,
                 layout: {
                     type: "pattern",
                     pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
