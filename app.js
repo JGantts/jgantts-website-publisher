@@ -35,7 +35,7 @@ log4js.configure({
             }
         },
         publish: {
-            type: "file", filename: `${APP_NAME}.log`,
+            type: "file", filename: `${config.security.logPath}${APP_NAME}.log`,
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
@@ -98,8 +98,7 @@ let initilize = async () => {
             res.writeHead(503, {'Content-Type': 'text/html'});
             res.write("<p>503 Service Unavailable</p>");
             res.write("<p>It's not you it's us.</p>");
-            res.write("<p>Server may be booting.</p>");
-            res.write("<p>Please try again in a few minutes.</p>");
+            res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
             res.end();
         }
     }).listen(listeningPort);

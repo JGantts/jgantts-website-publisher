@@ -4,10 +4,11 @@ const log4js = require('log4js');
 const fs = require('fs-extra');
 const randomUUID = require('uuid').v4;
 const exec = require('child_process').exec;
+const config = require('./config').config;
 
-const APP_NAME = "jgantts-website-publisher"
-const WEBSITE_NAME = 'jgantts.com'
-const WORKER_TOTAL = 4;
+const APP_NAME = "jgantts-website-publisher";
+const WEBSITE_NAME = 'jgantts.com';
+const WORKER_TOTAL = 4;;
 
 process.env.NODE_SITE_PUB_ENV = 'dev';
 
@@ -21,7 +22,7 @@ log4js.configure({
             }
         },
         publish: {
-            type: "file", filename: `${APP_NAME}.log`,
+            type: "file", filename: `${config.security.logPath}${APP_NAME}.log`,
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
@@ -72,7 +73,7 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    siteDir = `../websites/${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `${config.security.websitesDir}/${WEBSITE_NAME}-${uuid}/`;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
