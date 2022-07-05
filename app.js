@@ -54,6 +54,7 @@ logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
+    await fs.ensureDir(config.security.workingDir, 666);
     process.chdir(config.security.workingDir);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
@@ -114,8 +115,6 @@ let initilize = async () => {
     }
 
     logger.debug('After privledge reduction.');
-    
-    await fs.ensureDir(config.security.workingDir, { mode: 0o666 });
 
     await startWorkers();
 
