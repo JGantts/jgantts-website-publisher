@@ -23,7 +23,7 @@ log4js.configure({
         },
         publish: {
             type: "file", filename: `${APP_NAME}-worker.log`,
-            mode: parseInt((666).toString(8), 10),
+            mode: parseInt((666).toString(10), 8),
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} [work] %p %c %m",
@@ -76,8 +76,8 @@ let initSite = async () => {
     let uuid = randomUUID();
     siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
-    await fs.ensureDir(siteDir, parseInt((666).toString(8), 10));
-    await fs.ensureDir(logDir, parseInt((666).toString(8), 10));
+    await fs.ensureDir(siteDir, parseInt((666).toString(10), 8));
+    await fs.ensureDir(logDir, parseInt((666).toString(10), 8));
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
