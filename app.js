@@ -108,26 +108,6 @@ let initilize = async () => {
         logger.debug("failed to reduce privilege. Quitting");
         throw Error("failed to reduce privilege. Quitting");
     }
-    log4js.configure({
-        appenders: {
-            out: {
-                type: "stdout",
-                layout: {
-                    type: "pattern",
-                    pattern: "%d{hh.mm.ss} %p %c %m"
-                }
-            },
-            publish: {
-                type: "file", filename: `${config.security.logPath}/${APP_NAME}-main-${config.security.leastprivilegeduser}.log`,
-                layout: {
-                    type: "pattern",
-                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
-                }
-            }
-        },
-        categories: { default: { appenders: ["publish", "out"], level: "debug" } }
-    });
-    logger.level = "debug";
 
     await startWorkers();
 
