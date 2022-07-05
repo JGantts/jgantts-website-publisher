@@ -24,8 +24,6 @@ const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
 
-process.env.NODE_SITE_PUB_ENV = 'dev';
-
 log4js.configure({
     appenders: {
         out: {
@@ -58,13 +56,21 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-    // var httpsRedirectServer = express();
-    // httpsRedirectServer.get('*', function(req, res) {
-    //     if (!req.secure) {
-    //         res.redirect('https://' + req.headers.host + req.url);
-    //     }
-    // })
-    // httpsRedirectServer.listen(HTTP_PORT);
+    let LISTENING_PORT;
+    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+        LISTENING_PORT = 8080;
+    } else {
+        LISTENING_PORT = HTTPS_PORT;
+        var httpsRedirectServer = express();
+        httpsRedirectServer.get('*', function(req, res) {
+            if (!req.secure) {
+                res.redirect('https://' + req.headers.host + req.url);
+            }
+        })
+        httpsRedirectServer.listen(HTTP_PORT);
+    }
+
+
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
@@ -78,14 +84,14 @@ let initilize = async () => {
             logger.debug(`port: ${port}`);
             loadBalancerPoxy.web(req, res, { target });
         } else {
-            res.writeHead(500, {'Content-Type': 'text/html'});
-            res.write("<p>500 - Server Error</p>");
+            res.writeHead(503, {'Content-Type': 'text/html'});
+            res.write("<p>503 Service Unavailable</p>");
             res.write("<p>It's not you it's us.</p>");
             res.write("<p>Server may be booting.</p>");
             res.write("<p>Please try again in a few minutes.</p>");
             res.end();
         }
-    }).listen();
+    }).listen(LISTENING_PORT);
 
     await startWorkers();
 
