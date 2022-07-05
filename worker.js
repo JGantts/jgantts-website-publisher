@@ -22,7 +22,7 @@ log4js.configure({
             }
         },
         publish: {
-            type: "file", filename: `{APP_NAME}-worker.log`,
+            type: "file", filename: `${APP_NAME}-worker.log`,
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} [work] %p %c %m",
