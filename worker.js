@@ -74,7 +74,8 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    siteDir = `${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
+    logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
@@ -84,7 +85,7 @@ let initSite = async () => {
         site = require(siteDir);
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
-        process.chdir(``);
+        process.chdir(logDir);
         site.start();
         process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
