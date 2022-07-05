@@ -33,7 +33,7 @@ logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
-    await fs.ensureDir(config.security.workingDir, (666).toString(8));
+    await fs.ensureDir(config.security.workingDir, parseInt(stat.mode.toString(8), 10));
     process.chdir(config.security.workingDir);
 
     log4js.configure({
@@ -47,7 +47,7 @@ let initilize = async () => {
             },
             publish: {
                 type: "file", filename: `${APP_NAME}.log`,
-                mode: (666).toString(8),
+                mode: parseInt(stat.mode.toString(8), 10),
                 layout: {
                     type: "pattern",
                     pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
