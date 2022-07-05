@@ -57,8 +57,6 @@ let initilize = async () => {
     await fs.ensureDir(config.security.workingDir, 666);
     process.chdir(config.security.workingDir);
 
-    fs.mkdir("test");
-
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
     let port = process.env.PORT | 8080;
