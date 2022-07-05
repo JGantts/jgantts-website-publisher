@@ -110,7 +110,7 @@ let initilize = async () => {
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
     }
-    
+
     log4js.configure({
         appenders: {
             out: {
@@ -121,7 +121,7 @@ let initilize = async () => {
                 }
             },
             publish: {
-                type: 'file', filename: 'home/nodejsapp/logs/main-leastprivilegeduser.log',
+                type: 'file', filename: `${config.security.logPath}/${APP_NAME}-main-${config.security.leastprivilegeduser}.log`,
                 layout: {
                     type: 'pattern',
                     pattern: '%d{yyyy/MM/dd-hh.mm.ss} %p %c %m'
