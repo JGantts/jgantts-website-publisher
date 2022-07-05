@@ -76,6 +76,7 @@ let initSite = async () => {
     let uuid = randomUUID();
     siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
+    await fs.ensureDir(logDir);
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
