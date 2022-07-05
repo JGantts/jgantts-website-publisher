@@ -8,7 +8,7 @@ const config = require('./config').config;
 
 const APP_NAME = "jgantts-website-publisher";
 const WEBSITE_NAME = 'jgantts.com';
-const WORKER_TOTAL = 4;;
+const WORKER_TOTAL = 4;
 
 process.env.NODE_SITE_PUB_ENV = 'dev';
 
@@ -23,10 +23,10 @@ log4js.configure({
         },
         publish: {
             type: "file", filename: `${APP_NAME}-worker.log`,
+            mode: "666",
             layout: {
                 type: "pattern",
                 pattern: "%d{yyyy/MM/dd-hh.mm.ss} [work] %p %c %m",
-                mode: "666",
             }
         }
     },
