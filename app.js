@@ -103,57 +103,36 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
-log4js.configure({
-    appenders: {
-        out: {
-            type: "stdout",
-            layout: {
-                type: "pattern",
-                pattern: "%d{hh.mm.ss} %p %c %m"
+    logger.debug('Before privledge prduction.');
+
+    process.setuid(config.security.leastprivilegeduser);
+    if (process.getuid() === 0){
+        logger.debug('failed to reduce privilege. Quitting');
+        throw Error('failed to reduce privilege. Quitting');
+    }
+    
+    log4js.configure({
+        appenders: {
+            out: {
+                type: "stdout",
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{hh.mm.ss} %p %c %m"
+                }
+            },
+            publish: {
+                type: 'file', filename: 'home/nodejsapp/logs/main-leastprivilegeduser.log',
+                layout: {
+                    type: 'pattern',
+                    pattern: '%d{yyyy/MM/dd-hh.mm.ss} %p %c %m'
+                }
             }
         },
-        publish: {
-            type: 'file', filename: 'home/nodejsapp/logs/main-root.log',
-            layout: {
-                type: 'pattern',
-                pattern: '%d{yyyy/MM/dd-hh.mm.ss} %p %c %m'
-            }
-        }
-    },
-    categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
-});
-logger.level = 'debug';
+        categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
+    });
+    logger.level = 'debug';
 
-logger.debug('Before privledge prduction.');
-
-process.setuid(config.security.leastprivilegeduser);
-if (process.getuid() === 0){
-    logger.debug('failed to reduce privilege. Quitting');
-    throw Error('failed to reduce privilege. Quitting');
-}
-
-log4js.configure({
-    appenders: {
-        out: {
-            type: "stdout",
-            layout: {
-                type: "pattern",
-                pattern: "%d{hh.mm.ss} %p %c %m"
-            }
-        },
-        publish: {
-            type: 'file', filename: 'home/nodejsapp/logs/main-leastprivilegeduser.log',
-            layout: {
-                type: 'pattern',
-                pattern: '%d{yyyy/MM/dd-hh.mm.ss} %p %c %m'
-            }
-        }
-    },
-    categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
-});
-logger.level = 'debug';
-
-logger.debug('After privledge prduction.');
+    logger.debug('After privledge prduction.');
 
     await startWorkers();
 
@@ -242,8 +221,8 @@ let startWorker = async () => {
             break;
 
             case "shutdown":
-                workerBody.worker.kill();
-                workerBody.shutdownCallback();
+            workerBody.worker.kill();
+            workerBody.shutdownCallback();
             break;
         }
     });
@@ -332,7 +311,7 @@ let checkVersion = async () => {
 
         logger.debug(`Updating ${WEBSITE_NAME} module`);
         exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async function(error, stdout, stderr){
-        logger.debug(`Done updating ${WEBSITE_NAME} module`);
+            logger.debug(`Done updating ${WEBSITE_NAME} module`);
             logger.debug(stdout);
             logger.debug(stderr);
             restartWorkers();
