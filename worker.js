@@ -18,14 +18,15 @@ log4js.configure({
             type: "stdout",
             layout: {
                 type: "pattern",
-                pattern: "%d{hh.mm.ss} %p %c %m"
+                pattern: "%d{hh.mm.ss} [work] %p %c %m"
             }
         },
         publish: {
-            type: "file", filename: `${config.security.logPath}/${APP_NAME}-worker.log`,
+            type: "file", filename: `{APP_NAME}-worker.log`,
             layout: {
                 type: "pattern",
-                pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
+                pattern: "%d{yyyy/MM/dd-hh.mm.ss} [work] %p %c %m",
+                mode: "666",
             }
         }
     },
@@ -73,7 +74,7 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    siteDir = `${config.security.websitesDir}/${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `${WEBSITE_NAME}-${uuid}/`;
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
@@ -82,8 +83,10 @@ let initSite = async () => {
 
         site = require(siteDir);
         process.on('message', receivedMessage);
+        let tempWorkindDir = process.cwd();
+        process.chdir(``);
         site.start();
-        logger.debug('launched');
+        process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);

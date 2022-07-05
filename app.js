@@ -20,6 +20,7 @@ process.on('exit', async (code) => {
         await killWorker(workerBodies[workerKey]);
     });
 });
+process.chdir(config.security.workingDir);
 
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
@@ -31,14 +32,15 @@ log4js.configure({
             type: "stdout",
             layout: {
                 type: "pattern",
-                pattern: "%d{hh.mm.ss} %p %c %m"
+                pattern: "%d{hh.mm.ss} [main] %p %c %m"
             }
         },
         publish: {
-            type: "file", filename: `${config.security.logPath}/${APP_NAME}-main-root.log`,
+            type: "file", filename: `${APP_NAME}.log`,
+            mode: "666",
             layout: {
                 type: "pattern",
-                pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
+                pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
             }
         }
     },
@@ -103,7 +105,7 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
-    logger.debug('Before privledge prduction.');
+    logger.debug('Before privledge reduction.');
 
     process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
@@ -111,28 +113,7 @@ let initilize = async () => {
         throw Error('failed to reduce privilege. Quitting');
     }
 
-    log4js.configure({
-        appenders: {
-            out: {
-                type: "stdout",
-                layout: {
-                    type: "pattern",
-                    pattern: "%d{hh.mm.ss} %p %c %m"
-                }
-            },
-            publish: {
-                type: 'file', filename: `${config.security.logPath}/${APP_NAME}-main-${config.security.leastprivilegeduser}.log`,
-                layout: {
-                    type: 'pattern',
-                    pattern: '%d{yyyy/MM/dd-hh.mm.ss} %p %c %m'
-                }
-            }
-        },
-        categories: { default: { appenders: ['publish', 'out'], level: 'debug' } }
-    });
-    logger.level = 'debug';
-
-    logger.debug('After privledge prduction.');
+    logger.debug('After privledge reduction.');
 
     await startWorkers();
 
