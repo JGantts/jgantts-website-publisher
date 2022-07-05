@@ -127,9 +127,11 @@ let initilize = async () => {
 };
 
 let startWorkers = async () => {
+    logger.debug("restartWorkers")
     for (let i = 0; i < WORKER_TOTAL; i++) {
         await startWorker();
     }
+    logger.debug("done restartWorkers")
 }
 
 let restartWorkers = async () => {
