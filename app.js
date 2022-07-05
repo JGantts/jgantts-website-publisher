@@ -7,7 +7,7 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const httpProxy = require('http-proxy');
-const fs = fsSync.promises;
+const fs = require('fs-extra').promises;
 const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
@@ -56,7 +56,7 @@ logger.debug(`NodeJS ${process.versions.node}`);
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir);
     process.chdir(config.security.workingDir);
-    
+
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
     let port = process.env.PORT | 8080;
