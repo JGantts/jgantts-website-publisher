@@ -75,7 +75,12 @@ let initSite = async () => {
     let uuid = randomUUID();
     siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
-    await fs.ensureDir(logDir);
+    if (!fs.existsSync(siteDir)){
+        fs.mkdirSync(siteDir, { recursive: true });
+    }
+    if (!fs.existsSync(logDir)){
+        fs.mkdirSync(logDir, { recursive: true });
+    }
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
         await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
