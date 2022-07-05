@@ -20,6 +20,7 @@ process.on('exit', async (code) => {
         await killWorker(workerBodies[workerKey]);
     });
 });
+await fs.ensureDir(config.security.workingDir);
 process.chdir(config.security.workingDir);
 
 const APP_NAME = "jgantts-website-publisher"
