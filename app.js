@@ -20,8 +20,6 @@ process.on('exit', async (code) => {
         await killWorker(workerBodies[workerKey]);
     });
 });
-await fs.ensureDir(config.security.workingDir);
-process.chdir(config.security.workingDir);
 
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
@@ -56,7 +54,9 @@ logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
 logger.debug(`NodeJS ${process.versions.node}`);
 
 let initilize = async () => {
-
+    await fs.ensureDir(config.security.workingDir);
+    process.chdir(config.security.workingDir);
+    
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
     let port = process.env.PORT | 8080;
