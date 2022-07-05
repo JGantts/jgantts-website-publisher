@@ -11,6 +11,7 @@ const fs = fsSync.promises;
 const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
+const config = require('./config').config;
 
 let workerBodies = new Object();
 
@@ -57,6 +58,30 @@ let initilize = async () => {
 
     let port = process.env.PORT | 8080;
 
+
+
+    const app = express();
+    const httpServer = http.createServer(app);
+    const httpsServer = https.createServer(config.ssh, app);
+
+    const HTTP_PORT = 80;
+    const HTTPS_PORT = 443;
+
+    let listeningPort;
+
+    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+        listeningPort = 8080;
+    } else {
+        listeningPort = HTTPS_PORT;
+        var httpsRedirectServer = express();
+        httpsRedirectServer.get('*', function(req, res) {
+            if (!req.secure) {
+                res.redirect('https://' + req.headers.host + req.url);
+            }
+        })
+        httpsRedirectServer.listen(HTTP_PORT);
+    }
+
     http.createServer(function (req, res) {
         if (!req.secure) {
             res.redirect('https://' + req.headers.host + req.url);
@@ -77,7 +102,13 @@ let initilize = async () => {
             res.write("<p>Please try again in a few minutes.</p>");
             res.end();
         }
-    }).listen(port);
+    }).listen(listeningPort);
+
+    process.setuid(config.security.leastprivilegeduser);
+    if (process.getuid() === 0){
+        logger.debug("failed to reduce privilege. Quitting");
+        throw Error("failed to reduce privilege. Quitting");
+    }
 
     await startWorkers();
 
