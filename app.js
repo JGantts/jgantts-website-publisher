@@ -103,11 +103,30 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
+
+    logger.debug(`Before privledge prduction.`);
+
     process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug("failed to reduce privilege. Quitting");
         throw Error("failed to reduce privilege. Quitting");
     }
+
+    log4js.configure({
+        appenders: {
+            publish: {
+                type: "file", filename: `${config.security.logPath}/${APP_NAME}-main-${config.security.leastprivilegeduser}.log`,
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
+                }
+            }
+        },
+        categories: { default: { appenders: ["publish"], level: "debug" } }
+    });
+    logger.level = "debug";
+
+    logger.debug(`After privledge prduction.`);
 
     await startWorkers();
 
