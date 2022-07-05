@@ -118,7 +118,7 @@ let initilize = async () => {
                 }
             },
             publish: {
-                type: "file", filename: `${config.security.logPath}/${APP_NAME}-${config.secure.leastprivilegeduser}.log`,
+                type: "file", filename: `${config.security.logPath}/${APP_NAME}-${config.security.leastprivilegeduser}.log`,
                 layout: {
                     type: "pattern",
                     pattern: "%d{yyyy/MM/dd-hh.mm.ss} %p %c %m"
