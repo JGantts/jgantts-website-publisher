@@ -16,6 +16,7 @@ const config = require('./config').config;
 let workerBodies = new Object();
 
 process.on('exit', async (code) => {
+    log4js.shutdown();
     Object.keys(workerBodies).forEach(async (workerKey) => {
         await killWorker(workerBodies[workerKey]);
     });
