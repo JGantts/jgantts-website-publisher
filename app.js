@@ -25,13 +25,6 @@ const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
 
-const logger = log4js.getLogger();
-logger.level = "debug";
-logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
-
-logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
-logger.debug(`NodeJS ${process.versions.node}`);
-
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir, { mode: 0o666 });
     process.chdir(config.security.workingDir);
@@ -58,6 +51,12 @@ let initilize = async () => {
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
 
+    const logger = log4js.getLogger();
+    logger.level = "debug";
+    logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
+
+    logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
+    logger.debug(`NodeJS ${process.versions.node}`);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
