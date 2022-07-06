@@ -140,6 +140,10 @@ let initilize = async () => {
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
 
+
+    logger.debug('After reconfiguration.');
+
+
     logger = log4js.getLogger();
 
     await startWorkers();
