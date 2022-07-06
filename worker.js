@@ -1,3 +1,5 @@
+console.log("begin");
+
 //Master (balancer) and Worker (sites)
 const { fork } = require('child_process');
 const log4js = require('log4js');
