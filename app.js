@@ -1,4 +1,5 @@
 const { fork } = require('child_process');
+const log4jsRoot = require('log4js');
 const log4js = require('log4js');
 const randomUUID = require('uuid').v4;
 const cron = require('node-cron');
@@ -30,35 +31,6 @@ let logger;
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir, { mode: 0o666 });
     process.chdir(config.security.workingDir);
-
-    log4js.configure({
-        appenders: {
-            out: {
-                type: "stdout",
-                layout: {
-                    type: "pattern",
-                    pattern: "%d{hh.mm.ss} [main] %p %c %m"
-                }
-            },
-            publish: {
-                type: "file",
-                filename: `${APP_NAME}.log`,
-                options: { mode: 0o666 },
-                layout: {
-                    type: "pattern",
-                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
-                }
-            }
-        },
-        categories: { default: { appenders: ["publish", "out"], level: "debug" } }
-    });
-
-    logger = log4js.getLogger();
-    logger.level = "debug";
-    logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
-
-    logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
-    logger.debug(`NodeJS ${process.versions.node}`);
 
     let loadBalancerPoxy = httpProxy.createProxyServer();
 
@@ -98,7 +70,6 @@ let initilize = async () => {
             let workerBody = workerBodies[keys[keyIndex]];
             let port = workerBody.port;
             let target = {host: '127.0.0.1', port: port};
-            logger.debug(`port: ${port}`);
             loadBalancerPoxy.web(req, res, { target });
         } else {
             res.writeHead(503, {'Content-Type': 'text/html'});
@@ -109,7 +80,7 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
-    logger.debug('Before privledge reduction.');
+    loggerRoot.debug('Before privledge reduction.');
 
     process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
@@ -117,12 +88,36 @@ let initilize = async () => {
         throw Error('failed to reduce privilege. Quitting');
     }
 
-    logger.debug('After privledge reduction.');
-
-    logger.debug('Again.');
-
+    log4jsRoot.configure({
+        appenders: {
+            out: {
+                type: "stdout",
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{hh.mm.ss} [main] %p %c %m"
+                }
+            },
+            publish: {
+                type: "file",
+                filename: `${APP_NAME}.log`,
+                options: { mode: 0o666 },
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
+                }
+            }
+        },
+        categories: { default: { appenders: ["publish", "out"], level: "debug" } }
+    });
 
     logger = log4js.getLogger();
+    logger.level = "debug";
+    logger.debug('After privledge reduction');
+    logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
+
+    logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
+    logger.debug(`NodeJS ${process.versions.node}`);
+
 
     await startWorkers();
 
