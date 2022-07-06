@@ -227,7 +227,7 @@ let startWorkerPromise = () => {
     return new Promise(async (resolve, reject) => {
         logger.debug(`Forking worker.`);
         console.log("about to fork");
-        let newWorker = {};// fork(path.join(path.dirname(await fs.realpath(__filename)), 'worker.js'));
+        let newWorker = fork(path.join(path.dirname(await fs.realpath(__filename)), 'worker.js'));
         console.log("forked");
         logger.debug(`Forked worker.`);
         newWorker.on('message', async (msg) => {
