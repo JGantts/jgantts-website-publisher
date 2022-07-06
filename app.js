@@ -24,7 +24,7 @@ process.on('exit', async (code) => {
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
-const logger;
+let logger;
 
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir, { mode: 0o666 });
