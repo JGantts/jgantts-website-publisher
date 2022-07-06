@@ -110,11 +110,11 @@ let initilize = async () => {
 
     logger.debug('Before privledge reduction.');
 
-    process.setuid(config.security.leastprivilegeduser);
+    /*process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
-    }
+    }*/
 
     logger.debug('After privledge reduction.');
 
