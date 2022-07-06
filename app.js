@@ -47,7 +47,7 @@ let initilize = async () => {
             },
             publish: {
                 type: "file",
-                filename: `${APP_NAME}.log`,
+                filename: `${APP_NAME}-test.log`,
                 options: { mode: 0o666 },
                 layout: {
                     type: "pattern",
