@@ -140,6 +140,7 @@ let initilize = async () => {
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
 
+        logger = log4js.getLogger();
 
     logger.debug('After reconfiguration.');
 
