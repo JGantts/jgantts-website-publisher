@@ -80,8 +80,6 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
-    loggerRoot.debug('Before privledge reduction.');
-
     process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
