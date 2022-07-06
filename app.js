@@ -118,6 +118,7 @@ let initilize = async () => {
     }
 
     logger.debug('After privledge reduction.');
+    log4js.shutdown();
 
     logger.debug('Again.');
 
