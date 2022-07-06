@@ -24,6 +24,7 @@ process.on('exit', async (code) => {
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
+const logger;
 
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir, { mode: 0o666 });
@@ -51,7 +52,7 @@ let initilize = async () => {
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
 
-    const logger = log4js.getLogger();
+    logger = log4js.getLogger();
     logger.level = "debug";
     logger.debug(`Begin Log ${APP_NAME} ${process.pid}`);
 
