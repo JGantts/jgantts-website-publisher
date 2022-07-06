@@ -41,7 +41,7 @@ let initilize = async () => {
             },
             publish: {
                 type: "file",
-                filename: `${APP_NAME}-test.log`,
+                filename: `${APP_NAME}-root.log`,
                 options: { mode: 0o666 },
                 layout: {
                     type: "pattern",
@@ -117,6 +117,30 @@ let initilize = async () => {
     }
 
     logger.debug('After privledge reduction.');
+
+    log4js.configure({
+        appenders: {
+            out: {
+                type: "stdout",
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{hh.mm.ss} [main] %p %c %m"
+                }
+            },
+            publish: {
+                type: "file",
+                filename: `${APP_NAME}-nonroot.log`,
+                options: { mode: 0o666 },
+                layout: {
+                    type: "pattern",
+                    pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
+                }
+            }
+        },
+        categories: { default: { appenders: ["publish", "out"], level: "debug" } }
+    });
+
+    logger = log4js.getLogger();
 
     await startWorkers();
 
