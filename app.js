@@ -25,7 +25,6 @@ process.on('exit', async (code) => {
 });
 
 const APP_NAME = "jgantts-website-publisher"
-const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WEBSITE_NAME_STYLE = 'JGantts.com'
 const WORKER_TOTAL = 4;
