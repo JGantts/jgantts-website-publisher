@@ -83,7 +83,7 @@ let initSite = async () => {
 
         await install(siteDir);
 
-        site = require(siteDir);
+        site = require(siteDir + `out/index`);
         process.on('message', receivedMessage);
         //let tempWorkindDir = process.cwd();
         //process.chdir(logDir);
