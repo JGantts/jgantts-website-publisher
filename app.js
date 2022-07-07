@@ -91,11 +91,11 @@ let initilize = async () => {
             res.write(contents);
             res.end()
         })
-        await httpsRedirectServer.get('*', function(req, res) {
+        /*await httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
-        })
+        })*/
         await httpsRedirectServer.listen(HTTP_PORT);
     }
 
