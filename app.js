@@ -28,11 +28,12 @@ const WORKER_TOTAL = 4;
 let logger;
 
 let initilize = async () => {
+    console.log(`Pre-logging`);
     await fs.ensureDir(config.security.workingDir);
     await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
+    console.log(`Make dir ${config.security.workingDir}`);
     process.chdir(config.security.workingDir);
-    //await fs.ensureDir(config.security.websitesDir);
-    //await changeOwnerToLeastPrivilegedUser(config.security.websitesDir);
+    console.log(`Change dir ${config.security.workingDir}`);
 
     log4js.configure({
         appenders: {
@@ -56,6 +57,7 @@ let initilize = async () => {
     });
 
     await changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
+    console.log(`Change to lpu ${APP_NAME}.log}`);
 
     logger = log4js.getLogger();
     logger.level = "debug";
@@ -138,7 +140,6 @@ let changeOwnerToLeastPrivilegedUser = async (path) => {
         config.security.leastprivilegeduserUID,
         config.security.leastprivilegeduserGiID
     );
-    logger.debug(`Changed ${path} to lpu.`);
 }
 
 let startWorkers = async () => {
