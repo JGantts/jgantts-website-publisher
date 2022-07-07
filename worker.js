@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const randomUUID = require('uuid').v4;
 const exec = require('child_process').exec;
 const config = require('./config').config;
+const path = require('path');
 
 const APP_NAME = "jgantts-website-publisher";
 const WEBSITE_NAME = 'jgantts.com';
