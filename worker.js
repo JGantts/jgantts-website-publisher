@@ -87,6 +87,7 @@ let initSite = async () => {
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         process.chdir(logDir);
+        logger.debug(`Node Site #${process.pid} starting.`);
         site.start();
         process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
