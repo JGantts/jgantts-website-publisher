@@ -102,8 +102,8 @@ let initilize = async () => {
             key: fs.readFileSync(config.security.ssl.keyFile),
             cert: fs.readFileSync(config.security.ssl.certFile)
         }
-        const sslserver = https.createServer(sslOptions, loadBalancerHandler)
-        await sslserver.listen(HTTPS_PORT);
+        const sslLoadBalancer = https.createServer(sslOptions, loadBalancerHandler)
+        await sslLoadBalancer.listen(HTTPS_PORT);
     }
 
     logger.debug('Before privilege reduction.');
