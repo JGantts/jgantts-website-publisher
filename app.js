@@ -154,8 +154,8 @@ let loadBalancerHandler = async (req, res) => {
             res.writeHead(500, {'Content-Type': 'text/html'});
             res.write(`<p>${WEBSITE_NAME_STYLE}</p>`);
             res.write("<p>500 Server Error</p>");
-            res.write("<p>It's not you it's us.</p>");
-            res.write("<p>Can't find worker port.</p>");
+            res.write("<p>It's not you; it's us</p>");
+            res.write("<p>Can't find worker port</p>");
             res.end();
             return;
         }
@@ -166,8 +166,8 @@ let loadBalancerHandler = async (req, res) => {
         res.writeHead(503, {'Content-Type': 'text/html'});
         res.write(`<p>${WEBSITE_NAME_STYLE}</p>`);
         res.write("<p>503 Service Unavailable</p>");
-        res.write("<p>It's not you it's us.</p>");
-        res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
+        res.write("<p>It's not you; it's us</p>");
+        res.write("<p>Server may be booting<br />Please try again in a few minutes</p>");
         res.end();
     }
 }
