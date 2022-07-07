@@ -31,8 +31,8 @@ let initilize = async () => {
     await fs.ensureDir(config.security.workingDir);
     await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
     process.chdir(config.security.workingDir);
-    await fs.ensureDir(config.security.websitesDir);
-    await changeOwnerToLeastPrivilegedUser(config.security.websitesDir);
+    //await fs.ensureDir(config.security.websitesDir);
+    //await changeOwnerToLeastPrivilegedUser(config.security.websitesDir);
 
     log4js.configure({
         appenders: {
@@ -121,6 +121,9 @@ let initilize = async () => {
         throw Error('failed to reduce privilege. Quitting');
     }
     logger.debug('After privilege reduction.');
+
+
+    await fs.ensureDir(config.security.websitesDir);
 
     await startWorkers();
 
