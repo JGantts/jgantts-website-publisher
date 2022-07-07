@@ -30,7 +30,7 @@ let logger;
 let initilize = async () => {
     console.log(`Pre-logging`);
     console.log(`I am ${process.getuid()}`)
-    let workingDir = path.join(`/${config.security.leastprivilegeduser}`, config.security.workingDir)
+    let workingDir = `/${config.security.leastprivilegeduser}/${config.security.workingDir}`;
     await fs.ensureDir(workingDir);
     await changeOwnerToLeastPrivilegedUser(workingDir);
     await changeOwnerToLeastPrivilegedUser(`/root/.npm`);
