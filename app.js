@@ -126,6 +126,7 @@ let initilize = async () => {
         throw Error('failed to reduce privilege. Quitting');
     }
     logger.debug('After privilege reduction.');
+    console.log(`I am ${process.getuid()}`)
 
 
     await fs.ensureDir(config.security.websitesDir);
