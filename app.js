@@ -291,7 +291,6 @@ let startWorkerPromise = () => {
         let newWorker = fork(path.join(path.dirname(await fs.realpath(__filename)), 'worker.js'));
         logger.debug(`Forked worker.`);
         newWorker.on('message', async (msg) => {
-            logger.debug(`${msg.type}`);
             switch (msg.type){
                 case "start":
                 resolve(newWorker);
