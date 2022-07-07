@@ -24,6 +24,7 @@ process.on('exit', async (code) => {
 
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
+const WEBSITE_NAME_STYLE = 'JGantts.com'
 const WORKER_TOTAL = 4;
 let logger;
 let loadBalancerPoxy;
@@ -134,6 +135,7 @@ let loadBalancerHandler = async (req, res) => {
         loadBalancerPoxy.web(req, res, { target });
     } else {
         res.writeHead(503, {'Content-Type': 'text/html'});
+        res.write(`<p>${WEBSITE_NAME_STYLE}</p>`);
         res.write("<p>503 Service Unavailable</p>");
         res.write("<p>It's not you it's us.</p>");
         res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
