@@ -2,6 +2,7 @@
 echo "Setting up jgantts-website-publisher for CentOS 7"
 useradd jgantts-website-publisher
 curl –sL https://rpm.nodesource.com/setup_16.x | bash -
+yum -y update
 yum -y install git
 yum -y install nodejs
 cd /root
