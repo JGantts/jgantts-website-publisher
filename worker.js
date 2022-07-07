@@ -73,7 +73,7 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `./websites/${WEBSITE_NAME}-${uuid}/`;
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
     await fs.ensureDir(siteDir);
     await fs.ensureDir(logDir);
