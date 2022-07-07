@@ -254,6 +254,7 @@ let startWorker = async () => {
     let newWorker = await startWorkerPromise();
     logger.debug(`Worker ${newWorker.pid} fork.`);
     let port = await getPortPromise(newWorker);
+    logger.debug(`new port: ${port}`);
     let workerBody = {
         uuid: randomUUID(),
         worker: newWorker,
@@ -362,9 +363,10 @@ let checkVersion = async () => {
             }
         }
 
+        let installDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}/${config.security.installDir}`
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
         exec(`npm cache clean --force`, async (v) => {
-            exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
+            exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
                 logger.debug(`Done updating ${WEBSITE_NAME} module`);
                 logger.debug(stdout);
                 logger.debug(stderr);
