@@ -137,6 +137,7 @@ let loadBalancerHandler = async (req, res) => {
         let keyIndex = Math.floor(Math.random() * keys.length);
         let workerBody = workerBodies[keys[keyIndex]];
         let port = workerBody.port;
+        logger.debug(worker);
         let target = {host: '127.0.0.1', port: port};
         logger.debug(`port: ${port}`);
         loadBalancerPoxy.web(req, res, { target });
