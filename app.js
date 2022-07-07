@@ -138,12 +138,6 @@ let initilize = async () => {
 };
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
-    return
-    await fs.chown(
-        path,
-        config.security.leastprivilegeduserUID,
-        config.security.leastprivilegeduserGiID
-    );
     return new Promise(async (resolve, reject) => {
         logger.debug(`chown leastprivilegeduser ${siteDir}`);
         exec(
