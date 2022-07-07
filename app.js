@@ -143,8 +143,8 @@ let changeOwnerToLeastPrivilegedUser = async (path) => {
         exec(
             `chown -R ${config.security.leastprivilegeduserUID}:${config.security.leastprivilegeduserGiID} "${path}"`,
             async function(error, stdout, stderr){
-            logger.debug(`stdout: ${stdout}`);
-            logger.debug(`stderr: ${stderr}`);
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
             if (error) {
                 reject();
             } else {
