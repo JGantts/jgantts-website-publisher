@@ -320,6 +320,7 @@ let checkStatus = async () => {
             workerBody.worker.send({type: "heartbeat"});
             await delay(1000);
             if (!workerBody.heartbeat) {
+                logger.debug(`heart stopped ${workerBody.uuid}`);
                 await restartWorker(workerBody);
             }
         }
