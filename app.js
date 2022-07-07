@@ -38,8 +38,6 @@ let initilize = async () => {
     await changeOwnerToLeastPrivilegedUser(`node_modules`);
     await fs.ensureDir(workingDir);
     await changeOwnerToLeastPrivilegedUser(workingDir);
-    await fs.ensureDir(installDir);
-    await changeOwnerToLeastPrivilegedUser(installDir);
     await fs.ensureDir(`${workingDir}/websites`);
     await changeOwnerToLeastPrivilegedUser(`${workingDir}/websites`);
     process.chdir(workingDir);
@@ -74,9 +72,19 @@ let initilize = async () => {
     logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
     logger.debug(`NodeJS ${process.versions.node}`);
 
+    let checkVersionBeforeLaunch = false;
+
+    if (!(await fs.exists(installDir))) {
+        checkVersionBeforeLaunch = true;
+    }
+
+    if (checkVersionBeforeLaunch) {
+        await checkVersion();
+    } else {
+
+    }
 
     let port = process.env.PORT | 8080;
-
 
     loadBalancerPoxy = httpProxy.createProxyServer();
 
@@ -133,7 +141,10 @@ let initilize = async () => {
 
     await startWorkers();
 
-    checkStatusandVersion();
+    if (checkVersionBeforeLaunch) {
+    } else {
+        await checkStatusandVersion();
+    }
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
@@ -364,6 +375,8 @@ let checkVersion = async () => {
         }
 
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
+        await fs.rm(installDir);
+        await fs.ensureDir(installDir);
         exec(`npm cache clean --force`, async (error, stdout, stderr) => {
             logger.debug(stdout);
             logger.debug(stderr);
