@@ -367,7 +367,7 @@ let checkVersion = () => {
                 }
             }
 
-            logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
+            logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
             await fs.rm(installDir, { recursive:true });
             await fs.mkdir(installDir);
             exec(`npm cache clean --force`, async (error, stdout, stderr) => {
@@ -376,9 +376,12 @@ let checkVersion = () => {
                 exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
                     logger.debug(stdout);
                     logger.debug(stderr);
+                    logger.debug(`1`);
                     await fs.rm(`${installDir}/package.json`);
                     await fs.rm(`${installDir}/package-lock.json`);
+                    logger.debug(`2`);
                     await fs.rename(`${installDir}/node_modules/jgantts.com/* ./`, `${installDir}/`);
+                    logger.debug(`3`);
                     logger.debug(`Done updating ${WEBSITE_NAME} module`);
                     logger.debug(stdout);
                     logger.debug(stderr);
