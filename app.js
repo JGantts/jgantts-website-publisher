@@ -12,7 +12,8 @@ const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
 const config = require('./config').config;
-let installDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}/${config.security.installDir}`
+let workingDir = `/home/jgantts-website-publisher/working`;
+let installDir = `/home/jgantts-website-publisher/working/install`
 
 let workerBodies = new Object();
 
@@ -23,6 +24,7 @@ process.on('exit', async (code) => {
     });
 });
 
+const APP_NAME = "jgantts-website-publisher"
 const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WEBSITE_NAME_STYLE = 'JGantts.com'
@@ -35,11 +37,12 @@ let initilize = async () => {
     console.log(`I am ${process.getuid()}`)
     await changeOwnerToLeastPrivilegedUser(`/root/.npm`);
     await changeOwnerToLeastPrivilegedUser(`node_modules`);
-    let workingDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}`;
     await fs.ensureDir(workingDir);
     await changeOwnerToLeastPrivilegedUser(workingDir);
     await fs.ensureDir(installDir);
     await changeOwnerToLeastPrivilegedUser(installDir);
+    await fs.ensureDir(`${workingDir}/websites`);
+    await changeOwnerToLeastPrivilegedUser(`${workingDir}/websites`);
     process.chdir(workingDir);
 
     log4js.configure({
@@ -128,10 +131,7 @@ let initilize = async () => {
         throw Error('failed to reduce privilege. Quitting');
     }
     logger.debug('After privilege reduction.');
-    logger.debug(`I am ${process.getuid()}`)
-
-
-    await fs.ensureDir(config.security.websitesDir);
+    logger.debug(`I am ${process.getuid()}`);
 
     await startWorkers();
 

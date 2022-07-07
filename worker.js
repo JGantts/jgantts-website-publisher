@@ -4,7 +4,8 @@ const fs = require('fs-extra');
 const randomUUID = require('uuid').v4;
 const exec = require('child_process').exec;
 const config = require('./config').config;
-let installDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}/${config.security.installDir}`
+let workingDir = `/home/jgantts-website-publisher/working`;
+let installDir = `/home/jgantts-website-publisher/working/install`
 const path = require('path');
 
 const APP_NAME = "jgantts-website-publisher";

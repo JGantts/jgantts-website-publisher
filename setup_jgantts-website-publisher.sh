@@ -8,6 +8,8 @@ cd /root
 git clone https://github.com/JGantts/jgantts-website-publisher.git
 cd jgantts-website-publisher
 npm install
+mkdir /home/jgantts-website-publisher/working/install
+cd /home/jgantts-website-publisher/working/install && npm install jgantts.com
 echo "cd /root/jgantts-website-publisher/ && npm start" >> /etc/rc.d/rc.local
 chmod +x /etc/rc.d/rc.local
 systemctl enable rc-local
