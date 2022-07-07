@@ -128,7 +128,7 @@ let initilize = async () => {
 };
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
-    console,log(`Changing ${path} to lpu.`);
+    console.log(`Changing ${path} to lpu.`);
     await fs.chown(
         path,
         config.security.leastprivilegeduserUID,
