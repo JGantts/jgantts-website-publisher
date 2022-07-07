@@ -363,8 +363,8 @@ let checkVersion = async () => {
         }
 
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
-        exec(`npm cache clean --force`, async () => {
-            exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async function(error, stdout, stderr){
+        exec(`npm cache clean --force`, async (v) => {
+            exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
                 logger.debug(`Done updating ${WEBSITE_NAME} module`);
                 logger.debug(stdout);
                 logger.debug(stderr);
