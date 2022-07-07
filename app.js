@@ -332,55 +332,58 @@ let delay = async (ms) => {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
 }
 
-let checkVersion = async () => {
-    logger.debug(`checkVersion`);
-    const packageRegistry = `https://registry.npmjs.org/${WEBSITE_NAME}`;
+let checkVersion = () => {
+    return new Promise((resolve, reject) => {
+        logger.debug(`checkVersion`);
+        const packageRegistry = `https://registry.npmjs.org/${WEBSITE_NAME}`;
 
-    getJsonFromUri(packageRegistry, async (res) => {
-        if (res.error) { console.error(res.message); return; }
-        else if (!res.continue) { console.error(res.message); return; }
+        getJsonFromUri(packageRegistry, async (res) => {
+            if (res.error) { console.error(res.message); return; }
+            else if (!res.continue) { console.error(res.message); return; }
 
-        const packageMatadata = res.data
-        let versionsMetadata = packageMatadata.versions
-        let highestVersion = null;
-        for(var version in versionsMetadata) {
-            if(highestVersion === null) {
-                highestVersion = version;
-            } else {
-                if (compareVersions(highestVersion, version) <= 0) {
+            const packageMatadata = res.data
+            let versionsMetadata = packageMatadata.versions
+            let highestVersion = null;
+            for(var version in versionsMetadata) {
+                if(highestVersion === null) {
                     highestVersion = version;
+                } else {
+                    if (compareVersions(highestVersion, version) <= 0) {
+                        highestVersion = version;
+                    }
                 }
             }
-        }
 
-        let packageFile = `${installDir}/package.json`;
+            let packageFile = `${installDir}/package.json`;
 
-        if (fsSync.existsSync(packageFile)) {
-            const packageFileSting = (await fs.readFile(packageFile)).toString();
-            const packageFileJson = JSON.parse(packageFileSting);
-            const installedVersion = packageFileJson.version;
-            if (compareVersions(installedVersion, highestVersion) >= 0) {
-                logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
-                return;
+            if (fsSync.existsSync(packageFile)) {
+                const packageFileSting = (await fs.readFile(packageFile)).toString();
+                const packageFileJson = JSON.parse(packageFileSting);
+                const installedVersion = packageFileJson.version;
+                if (compareVersions(installedVersion, highestVersion) >= 0) {
+                    logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
+                    resolve();
+                }
             }
-        }
 
-        logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
-        await fs.rm(installDir, { recursive:true });
-        await fs.mkdir(installDir);
-        exec(`npm cache clean --force`, async (error, stdout, stderr) => {
-            logger.debug(stdout);
-            logger.debug(stderr);
-            exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
+            logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
+            await fs.rm(installDir, { recursive:true });
+            await fs.mkdir(installDir);
+            exec(`npm cache clean --force`, async (error, stdout, stderr) => {
                 logger.debug(stdout);
                 logger.debug(stderr);
-                await fs.rm(`${installDir}/package.json`);
-                await fs.rm(`${installDir}/package-lock.json`);
-                await fs.rename(`${installDir}/node_modules/jgantts.com/* ./`, `${installDir}/`);
-                logger.debug(`Done updating ${WEBSITE_NAME} module`);
-                logger.debug(stdout);
-                logger.debug(stderr);
-                restartWorkers();
+                exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
+                    logger.debug(stdout);
+                    logger.debug(stderr);
+                    await fs.rm(`${installDir}/package.json`);
+                    await fs.rm(`${installDir}/package-lock.json`);
+                    await fs.rename(`${installDir}/node_modules/jgantts.com/* ./`, `${installDir}/`);
+                    logger.debug(`Done updating ${WEBSITE_NAME} module`);
+                    logger.debug(stdout);
+                    logger.debug(stderr);
+                    await restartWorkers();
+                    resolve();
+                });
             });
         });
     });
