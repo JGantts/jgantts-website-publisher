@@ -84,7 +84,7 @@ let initSite = async () => {
         logger.debug(`cwd: ${process.cwd()}`);
         await install(siteDir);
 
-        let packageFile = siteDir + `package.js`
+        let packageFile = siteDir + `package.json`
         logger.debug(fs.existsSync(packageFile));
         site = require(packageFile);
         process.on('message', receivedMessage);
