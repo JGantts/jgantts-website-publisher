@@ -364,6 +364,7 @@ let checkVersion = () => {
                 if (compareVersions(installedVersion, highestVersion) >= 0) {
                     logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
                     resolve();
+                    return;
                 }
             }
 
