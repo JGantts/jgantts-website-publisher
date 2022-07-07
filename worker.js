@@ -77,7 +77,7 @@ let initSite = async () => {
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
     await fs.ensureDir(siteDir);
     await fs.ensureDir(logDir);
-    logger.debug(`Node Site #${process.pid} starting.`);
+    logger.debug(`Node Site #${process.pid} initializing.`);
     try {
         await fs.copy(path.join(path.dirname(await fs.realpath(__filename)), `node_modules/${WEBSITE_NAME}/`), siteDir);
 
