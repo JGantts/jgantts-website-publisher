@@ -84,7 +84,7 @@ let initSite = async () => {
         logger.debug(`cwd: ${process.cwd()}`);
         await install(siteDir);
 
-        site = require(siteDir + `out/index`);
+        site = require(siteDir);
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
