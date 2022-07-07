@@ -192,6 +192,7 @@ let changeOwnerToLeastPrivilegedUser = async (path) => {
     }
 
     let killWorker = (workerBody) => {
+        logger.debug(new Error().stack);
         return new Promise(async (resolve, reject) => {
             workerBody.active = false;
             workerBody.shutdownCallback = () => {
