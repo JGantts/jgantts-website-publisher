@@ -30,6 +30,8 @@ let logger;
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir);
     await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
+    await fs.ensureDir(config.security.websitesDir);
+    await changeOwnerToLeastPrivilegedUser(config.security.websitesDir);
     process.chdir(config.security.workingDir);
 
     log4js.configure({
