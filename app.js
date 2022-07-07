@@ -66,7 +66,6 @@ let initilize = async () => {
     });
 
     await changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
-    console.log(`Change to lpu ${APP_NAME}.log`);
 
     logger = log4js.getLogger();
     logger.level = "debug";
@@ -366,14 +365,23 @@ let checkVersion = async () => {
         }
 
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
-        exec(`npm cache clean --force`, async (v) => {
+        exec(`npm cache clean --force`, async (error, stdout, stderr) => {
+            logger.debug(stdout);
+            logger.debug(stderr);
             exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
-                logger.debug(`Done updating ${WEBSITE_NAME} module`);
                 logger.debug(stdout);
                 logger.debug(stderr);
-                restartWorkers();
+                exec(``, async (error, stdout, stderr) => {
+                    await fs.rm(`${installDir}/package.json`);
+                    await fs.rm(`${installDir}/package-lock.json`);
+                    await fs.rename(`${installDir}/node_modules/jgantts.com/* ./`, `${installDir}/`);
+                    logger.debug(`Done updating ${WEBSITE_NAME} module`);
+                    logger.debug(stdout);
+                    logger.debug(stderr);
+                    restartWorkers();
+                });
             });
-        })
+        });
     });
 }
 
