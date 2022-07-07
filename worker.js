@@ -84,10 +84,9 @@ let initSite = async () => {
         logger.debug(`cwd: ${process.cwd()}`);
         await install(siteDir);
 
-        let packageFile = siteDir + `package.json`
-        logger.debug(fs.existsSync(packageFile));
+        logger.debug(fs.existsSync(siteDir));
         logger.debug(`Node Site #${process.pid} loading.`);
-        site = require(await fs.realpath(packageFile));
+        site = require(await fs.realpath(siteDir));
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
