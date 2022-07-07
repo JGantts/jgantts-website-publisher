@@ -10,20 +10,23 @@ However I wanted smooth rollovers when publishig updates, so it launches a main 
 The main process receives all incoming requests and forwards them to a random worker process;
 in effect, making this is a simple load balancer.
 
+## Target Site
+
+This software currently targets the JGantts.com website.
+Source hosted at https://github.com/JGantts/jgantts.com/
+Build hosted at https://www.npmjs.com/package/jgantts.com
+Result hosted at https://jgantts.com/
+
 ## Security Considerations
 
-The setup script currently places the 
-
+The setup script currently places the target website
 
 ## Method
-
-
 
 ## API
 (between this publisher and the published website)
 
 The API is as follows
-
 
 ## Environment
 
