@@ -87,7 +87,7 @@ let initilize = async () => {
         let httpsRedirectServer = await express();
         await httpsRedirectServer.get('./well-known/pki-validation/7E166EFD1CA6C0A1EC8452A62671C9DC.txt', async function(req, res) {
             let contents = await fs.readFile(`/keys/jgantts.com/7E166EFD1CA6C0A1EC8452A62671C9DC.txt`);
-            res.writeHead(200, {'Content-Type': contentType});
+            res.writeHead(200, {'Content-Type': "text/plain"});
             res.write(contents);
             res.end()
         })
