@@ -138,11 +138,26 @@ let initilize = async () => {
 };
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
+    return
     await fs.chown(
         path,
         config.security.leastprivilegeduserUID,
         config.security.leastprivilegeduserGiID
     );
+    return new Promise(async (resolve, reject) => {
+        logger.debug(`chown leastprivilegeduser ${siteDir}`);
+        exec(
+            `chown -R ${config.security.leastprivilegeduserUID}:${config.security.leastprivilegeduserGiID} "${path}"`,
+            async function(error, stdout, stderr){
+            logger.debug(`stdout: ${stdout}`);
+            logger.debug(`stderr: ${stderr}`);
+            if (error) {
+                reject();
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 let startWorkers = async () => {
