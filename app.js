@@ -131,6 +131,7 @@ let initilize = async () => {
 };
 
 let loadBalancerHandler = async (req, res) => {
+    console.log(`loadBalancer ${req}`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
