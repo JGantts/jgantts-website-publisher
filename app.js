@@ -138,7 +138,7 @@ let changeOwnerToLeastPrivilegedUser = async (path) => {
         config.security.leastprivilegeduserUID,
         config.security.leastprivilegeduserGiID
     );
-    console.log(`Changed ${path} to lpu.`);
+    logger.debug(`Changed ${path} to lpu.`);
 }
 
 let startWorkers = async () => {
