@@ -108,9 +108,10 @@ let initSite = async () => {
 
 let install = (siteDir) => {
     return new Promise(async (resolve, reject) => {
+        logger.debug(`npm install ${siteDir}`);
         exec(`cd ${siteDir} && npm install && cd ../`, async function(error, stdout, stderr){
-            logger.debug(`${stdout}`);
-            logger.debug(`${stderr}`);
+            logger.debug(`stdout: ${stdout}`);
+            logger.debug(`stderr: ${stderr}`);
             if (error) {
                 reject();
             } else {
