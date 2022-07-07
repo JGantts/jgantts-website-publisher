@@ -28,7 +28,7 @@ const WORKER_TOTAL = 4;
 let logger;
 
 let initilize = async () => {
-    await fs.ensureDir(config.security.workingDir);
+    await fs.ensureDir(config.security.workingDir, 0o666);
     process.chdir(config.security.workingDir);
 
     log4js.configure({
