@@ -268,10 +268,8 @@ let startWorker = async () => {
         shutdownCallback: () => {}
     };
     newWorker.on('message', async (msg) => {
-        logger.debug(`${msg.type}`);
         switch (msg.type){
             case "heartbeat":
-            logger.debug(`heartbeat = ${msg.content.heartbeat}`)
             workerBody.heartbeat = msg.content;
             break;
 

@@ -41,7 +41,6 @@ let site;
 let siteDir;
 
 let receivedMessage = async (msg) => {
-    logger.debug(`Received ${msg.type}`);
     switch (msg.type){
         case 'heartbeat':
         let heartbeat = await site.heartbeat();
