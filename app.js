@@ -120,8 +120,6 @@ let initilize = async () => {
     }
     logger.debug('After privilege reduction.');
 
-    logger = log4js.getLogger();
-
     await startWorkers();
 
     checkStatusandVersion();
@@ -130,11 +128,13 @@ let initilize = async () => {
 };
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
+    logger.debug(`Changing ${path} to lpu.`);
     await fs.chown(
         path,
         config.security.leastprivilegeduserUID,
         config.security.leastprivilegeduserGiID
     );
+    logger.debug(`Changed ${path} to lpu.`);
 }
 
 let startWorkers = async () => {
