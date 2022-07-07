@@ -378,7 +378,7 @@ let checkVersion = () => {
                     logger.debug(stderr);
                     await fs.rm(`${installDir}/package.json`);
                     await fs.rm(`${installDir}/package-lock.json`);
-                    await fs.rename(`${installDir}/node_modules/jgantts.com/*`, `${installDir}/`);
+                    await fs.rename(`${installDir}/node_modules/jgantts.com/`, `${installDir}/`);
                     logger.debug(`Done updating ${WEBSITE_NAME} module`);
                     logger.debug(stdout);
                     logger.debug(stderr);
