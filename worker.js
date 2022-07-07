@@ -84,6 +84,7 @@ let initSite = async () => {
         logger.debug(`cwd: ${process.cwd()}`);
         await install(siteDir);
 
+        logger.debug(fs.existsSync(siteDir + `out/index.js`));
         site = require(siteDir + `out/index.js`);
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
