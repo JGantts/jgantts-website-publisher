@@ -94,7 +94,7 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
     }
 
-    http.createServer(function (req, res) {
+    await http.createServer(function (req, res) {
         if (!req.secure) {
             res.redirect('https://' + req.headers.host + req.url);
         }
