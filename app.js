@@ -32,6 +32,7 @@ let initilize = async () => {
     console.log(`I am ${process.getuid()}`)
     await fs.ensureDir(config.security.workingDir);
     await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
+    await changeOwnerToLeastPrivilegedUser(`/root/.npm`);
     console.log(`Make dir ${config.security.workingDir}`);
     process.chdir(config.security.workingDir);
     console.log(`Change dir ${config.security.workingDir}`);
