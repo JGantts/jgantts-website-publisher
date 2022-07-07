@@ -83,9 +83,9 @@ let initSite = async () => {
         await fs.copy(installDir, siteDir);
 
         logger.debug(`cwd: ${process.cwd()}`);
-        await install(siteDir);
+        //await install(siteDir);
 
-        logger.debug(fs.existsSync(siteDir));
+        //logger.debug(fs.existsSync(siteDir));
         logger.debug(`Node Site #${process.pid} loading.`);
         site = require(await fs.realpath(siteDir));
         process.on('message', receivedMessage);
