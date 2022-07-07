@@ -3,8 +3,6 @@ const log4js = require('log4js');
 const randomUUID = require('uuid').v4;
 const cron = require('node-cron');
 const fsSync = require('fs');
-const http = require('http');
-const https = require('https');
 const express = require('express');
 const httpProxy = require('http-proxy');
 const fs = require('fs-extra');
@@ -26,6 +24,7 @@ const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WORKER_TOTAL = 4;
 let logger;
+let loadBalancerPoxy;
 
 let initilize = async () => {
     console.log(`Pre-logging`);
@@ -68,15 +67,13 @@ let initilize = async () => {
     logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
     logger.debug(`NodeJS ${process.versions.node}`);
 
-    let loadBalancerPoxy = httpProxy.createProxyServer();
 
     let port = process.env.PORT | 8080;
 
 
+    loadBalancerPoxy = httpProxy.createProxyServer();
 
     const app = express();
-    const httpServer = http.createServer(app);
-    const httpsServer = https.createServer(config.ssh, app);
 
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
@@ -92,7 +89,6 @@ let initilize = async () => {
         })
         await httpsRedirectServer.listen(HTTP_PORT);
     }
-
 
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
         let loadBalancer = await http.createServer(loadBalancerHandler);
