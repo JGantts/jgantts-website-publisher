@@ -199,6 +199,7 @@ let restartWorkers = async () => {
 
 let restartWorker = (oldWorkerBody) => {
     return new Promise(async (resolve, reject) => {
+        logger.debug("restartWorker")
         if (oldWorkerBody !== null) {
             await killWorker(oldWorkerBody);
         }
@@ -208,8 +209,8 @@ let restartWorker = (oldWorkerBody) => {
 }
 
 let killWorker = (workerBody) => {
-    logger.debug(new Error().stack);
     return new Promise(async (resolve, reject) => {
+        logger.debug("killWorker")
         workerBody.active = false;
         workerBody.shutdownCallback = () => {
             delete workerBodies[workerBody.uuid];
