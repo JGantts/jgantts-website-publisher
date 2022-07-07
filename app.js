@@ -79,19 +79,19 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-    let listeningPort;
+    let loadBalancerPort;
 
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
-        listeningPort = 8080;
+        loadBalancerPort = 8080;
     } else {
-        listeningPort = HTTPS_PORT;
-        var httpsRedirectServer = express();
-        httpsRedirectServer.get('*', function(req, res) {
+        loadBalancerPort = HTTPS_PORT;
+        let httpsRedirectServer = express();
+        await httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
         })
-        httpsRedirectServer.listen(HTTP_PORT);
+        await httpsRedirectServer.listen(HTTP_PORT);
     }
 
     let loadBalancer = await http.createServer(function (req, res) {
@@ -114,7 +114,7 @@ let initilize = async () => {
             res.end();
         }
     })
-    await loadBalancer.listen(listeningPort);
+    await loadBalancer.listen(loadBalancerPort);
 
     logger.debug('Before privilege reduction.');
 
