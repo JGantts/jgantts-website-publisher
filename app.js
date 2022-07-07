@@ -92,7 +92,6 @@ let initilize = async () => {
             res.end()
         })
         await httpsRedirectServer.get('*', function(req, res) {
-            .well-known/pki-validation/
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
