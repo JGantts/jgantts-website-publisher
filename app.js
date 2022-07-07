@@ -128,13 +128,13 @@ let initilize = async () => {
 };
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
-    logger.debug(`Changing ${path} to lpu.`);
+    console,log(`Changing ${path} to lpu.`);
     await fs.chown(
         path,
         config.security.leastprivilegeduserUID,
         config.security.leastprivilegeduserGiID
     );
-    logger.debug(`Changed ${path} to lpu.`);
+    console.log(`Changed ${path} to lpu.`);
 }
 
 let startWorkers = async () => {
