@@ -28,7 +28,8 @@ const WORKER_TOTAL = 4;
 let logger;
 
 let initilize = async () => {
-    await fs.ensureDir(config.security.workingDir, 0o666);
+    await fs.ensureDir(config.security.workingDir);
+    changeOwnerToLeastPrivilegedUser(config.security.workingDir);
     process.chdir(config.security.workingDir);
 
     log4js.configure({
@@ -43,7 +44,6 @@ let initilize = async () => {
             publish: {
                 type: "file",
                 filename: `${APP_NAME}.log`,
-                mode: 0o666,
                 layout: {
                     type: "pattern",
                     pattern: "%d{yyyy/MM/dd-hh.mm.ss} [main] %p %c %m"
@@ -52,6 +52,8 @@ let initilize = async () => {
         },
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
+
+    changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
 
     logger = log4js.getLogger();
     logger.level = "debug";
@@ -127,12 +129,20 @@ let initilize = async () => {
     cron.schedule('* * * * *', checkStatusandVersion);
 };
 
+let changeOwnerToLeastPrivilegedUser = async (path) => {
+    await fs.chown(
+        path,
+        config.security.leastprivilegeduserUID,
+        config.security.leastprivilegeduserGiID
+    );
+}
+
 let startWorkers = async () => {
-    logger.debug("restartWorkers")
+    logger.debug("startWorkers")
     for (let i = 0; i < WORKER_TOTAL; i++) {
         await startWorker();
     }
-    logger.debug("done restartWorkers")
+    logger.debug("done startWorkers")
 }
 
 let restartWorkers = async () => {
