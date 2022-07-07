@@ -85,7 +85,7 @@ let initilize = async () => {
         loadBalancerPort = 8080;
     } else {
         loadBalancerPort = HTTPS_PORT;
-        let httpsRedirectServer = express();
+        let httpsRedirectServer = await express();
         await httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
