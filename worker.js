@@ -1,6 +1,3 @@
-console.log("begin");
-
-//Master (balancer) and Worker (sites)
 const { fork } = require('child_process');
 const log4js = require('log4js');
 const fs = require('fs-extra');
@@ -81,7 +78,7 @@ let initSite = async () => {
     await fs.ensureDir(logDir);
     logger.debug(`Node Site #${process.pid} starting.`);
     try {
-        await fs.copy(`node_modules/${WEBSITE_NAME}/`, siteDir);
+        await fs.copy(path.join(path.dirname(await fs.realpath(__filename)), `node_modules/${WEBSITE_NAME}/`), siteDir);
 
         await install(siteDir);
 
