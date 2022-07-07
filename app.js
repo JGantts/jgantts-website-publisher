@@ -127,15 +127,12 @@ let initilize = async () => {
     logger.debug('After privilege reduction.');
     logger.debug(`I am ${process.getuid()}`);
 
-
-    if (!(await fs.exists(installDir))) {
-        checkVersionBeforeLaunch = true;
-    }
-
-    if (checkVersionBeforeLaunch) {
+    if (!(await fs.exists(installDir)) {
+        logger.debug(`checkVersion && startWorkers`);
         await checkVersion();
         await startWorkers();
     } else {
+        logger.debug(`startWorkers && checkStatusandVersion`);
         await startWorkers();
         await checkStatusandVersion();
     }
@@ -310,12 +307,12 @@ let startWorkerPromise = () => {
 }
 
 let checkStatusandVersion = async () => {
-    logger.debug(`check version and status`);
     await checkVersion();
     await checkStatus();
 }
 
 let checkStatus = async () => {
+    logger.debug(`checkStatus`);
     Object.keys(workerBodies).forEach(async (workerKey) => {
         let workerBody = workerBodies[workerKey]
         if (workerBody.worker.exitCode !== null) {
@@ -336,7 +333,7 @@ let delay = async (ms) => {
 }
 
 let checkVersion = async () => {
-
+    logger.debug(`checkVersion`);
     const packageRegistry = `https://registry.npmjs.org/${WEBSITE_NAME}`;
 
     getJsonFromUri(packageRegistry, async (res) => {
