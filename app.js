@@ -126,11 +126,6 @@ let initilize = async () => {
 };
 
 let loadBalancerHandler = async (req, res) => {
-    if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
-        if (!req.secure) {
-            res.redirect('https://' + req.headers.host + req.url);
-        }
-    }
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
