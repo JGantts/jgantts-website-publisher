@@ -310,7 +310,7 @@ let checkStatusandVersion = async () => {
 }
 
 let checkStatus = async () => {
-    logger.debug(`checkStatus`);
+    //logger.debug(`checkStatus`);
     Object.keys(workerBodies).forEach(async (workerKey) => {
         let workerBody = workerBodies[workerKey]
         if (workerBody.worker.exitCode !== null) {
@@ -333,7 +333,7 @@ let delay = async (ms) => {
 
 let checkVersion = () => {
     return new Promise((resolve, reject) => {
-        logger.debug(`checkVersion`);
+        //logger.debug(`checkVersion`);
         const packageRegistry = `https://registry.npmjs.org/${WEBSITE_NAME}`;
 
         getJsonFromUri(packageRegistry, async (res) => {
@@ -393,7 +393,6 @@ let checkVersion = () => {
 
 let getJsonFromUri = async (uri, then) => {
     https.get(uri, (res) => {
-        logger.debug("response");
         const { statusCode } = res;
         const contentType = res.headers['content-type'];
 
