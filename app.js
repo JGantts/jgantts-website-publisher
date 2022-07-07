@@ -129,6 +129,7 @@ let initilize = async () => {
 
     if (!(await fs.exists(installDir))) {
         logger.debug(`checkVersion && startWorkers`);
+        await fs.mkdir(installDir);
         await checkVersion();
         await startWorkers();
     } else {
