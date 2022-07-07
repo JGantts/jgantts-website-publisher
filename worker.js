@@ -73,7 +73,7 @@ let receivedMessage = async (msg) => {
 
 let initSite = async () => {
     let uuid = randomUUID();
-    siteDir = `./websites/${WEBSITE_NAME}-${uuid}/`;
+    siteDir = `websites/${WEBSITE_NAME}-${uuid}/`;
     logDir = `website-logs/${WEBSITE_NAME}-${uuid}/`;
     await fs.ensureDir(siteDir);
     await fs.ensureDir(logDir);
@@ -86,7 +86,7 @@ let initSite = async () => {
 
         let packageFile = siteDir + `package.json`
         logger.debug(fs.existsSync(packageFile));
-        site = require(packageFile);
+        site = require(await fs.realpath(packageFile));
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
