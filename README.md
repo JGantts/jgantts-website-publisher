@@ -22,7 +22,7 @@ Build hosted at [www.npmjs.com/package/jgantts.com](https://www.npmjs.com/packag
 
 Result published at [JGantts.com](https://jgantts.com/)
 
-(Currently awaiting DNS propagation. IP is [199.192.16.176](http://199.192.16.176/)
+(Currently awaiting DNS propagation. IP is [199.192.16.176](http://199.192.16.176/))
 
 ## Security Considerations
 
