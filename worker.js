@@ -81,6 +81,7 @@ let initSite = async () => {
     try {
         await fs.copy(path.join(path.dirname(await fs.realpath(__filename)), `node_modules/${WEBSITE_NAME}/`), siteDir);
 
+        logger.debug(`cwd: ${process.cwd()}`);
         await install(siteDir);
 
         site = require(siteDir + `out/index`);
