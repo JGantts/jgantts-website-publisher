@@ -137,7 +137,15 @@ let loadBalancerHandler = async (req, res) => {
         let keyIndex = Math.floor(Math.random() * keys.length);
         let workerBody = workerBodies[keys[keyIndex]];
         let port = workerBody.port;
-        logger.debug(workerBody);
+        if (!port) {
+            res.writeHead(500, {'Content-Type': 'text/html'});
+            res.write(`<p>${WEBSITE_NAME_STYLE}</p>`);
+            res.write("<p>500 Server Error</p>");
+            res.write("<p>It's not you it's us.</p>");
+            res.write("<p>Can't find worker port.</p>");
+            res.end();
+            return;
+        }
         let target = {host: '127.0.0.1', port: port};
         logger.debug(`port: ${port}`);
         loadBalancerPoxy.web(req, res, { target });
