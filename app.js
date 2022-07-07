@@ -103,11 +103,18 @@ let initilize = async () => {
         let loadBalancer = await http.createServer(loadBalancerHandler);
         await loadBalancer.listen(HTTP_PORT);
     } else {
-        let sslOptions = {
-            key: fs.readFileSync(config.security.ssl.keyFile),
-            cert: fs.readFileSync(config.security.ssl.certFile)
+        const sslLoadBalancer;
+        try {
+            let sslOptions = {
+                key: fs.readFileSync(config.security.ssl.keyFile),
+                cert: fs.readFileSync(config.security.ssl.certFile)
+            }
+            sslLoadBalancer = http.createServer(sslOptions, loadBalancerHandler)
+        } catch (e) {
+            logger.debug(`Couldn't find key files`);
+            sslLoadBalancer = http.createServer(loadBalancerHandler)
         }
-        const sslLoadBalancer = http.createServer(loadBalancerHandler)
+        sslLoadBalancer = http.createServer(loadBalancerHandler)
         await sslLoadBalancer.listen(HTTP_PORT);
     }
 
@@ -355,7 +362,7 @@ let checkVersion = async () => {
             }
         }
 
-        logger.debug(`Updating ${WEBSITE_NAME} module`);
+        logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
         exec(`npm install ${WEBSITE_NAME}@${highestVersion}`, async function(error, stdout, stderr){
             logger.debug(`Done updating ${WEBSITE_NAME} module`);
             logger.debug(stdout);
