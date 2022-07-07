@@ -29,7 +29,7 @@ let logger;
 
 let initilize = async () => {
     await fs.ensureDir(config.security.workingDir);
-    changeOwnerToLeastPrivilegedUser(config.security.workingDir);
+    await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
     process.chdir(config.security.workingDir);
 
     log4js.configure({
@@ -53,7 +53,7 @@ let initilize = async () => {
         categories: { default: { appenders: ["publish", "out"], level: "debug" } }
     });
 
-    changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
+    await changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
 
     logger = log4js.getLogger();
     logger.level = "debug";
