@@ -12,6 +12,7 @@ const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
 const config = require('./config').config;
+let installDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}/${config.security.installDir}`
 
 let workerBodies = new Object();
 
@@ -37,6 +38,8 @@ let initilize = async () => {
     let workingDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}`;
     await fs.ensureDir(workingDir);
     await changeOwnerToLeastPrivilegedUser(workingDir);
+    await fs.ensureDir(installDir);
+    await changeOwnerToLeastPrivilegedUser(installDir);
     process.chdir(workingDir);
 
     log4js.configure({
@@ -351,7 +354,7 @@ let checkVersion = async () => {
             }
         }
 
-        let packageFile = `node_modules/${WEBSITE_NAME}/package.json`;
+        let packageFile = `${installDir}/package.json`;
 
         if (fsSync.existsSync(packageFile)) {
             const packageFileSting = (await fs.readFile(packageFile)).toString();
@@ -363,7 +366,6 @@ let checkVersion = async () => {
             }
         }
 
-        let installDir = `/home/${config.security.leastprivilegeduser}/${config.security.workingDir}/${config.security.installDir}`
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
         exec(`npm cache clean --force`, async (v) => {
             exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
