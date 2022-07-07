@@ -30,12 +30,11 @@ let logger;
 let initilize = async () => {
     console.log(`Pre-logging`);
     console.log(`I am ${process.getuid()}`)
-    await fs.ensureDir(config.security.workingDir);
-    await changeOwnerToLeastPrivilegedUser(config.security.workingDir);
+    let workingDir = path.join(config.security.leastprivilegeduser, config.security.workingDir)
+    await fs.ensureDir(workingDir);
+    await changeOwnerToLeastPrivilegedUser(workingDir);
     await changeOwnerToLeastPrivilegedUser(`/root/.npm`);
-    console.log(`Make dir ${config.security.workingDir}`);
-    process.chdir(config.security.workingDir);
-    console.log(`Change dir ${config.security.workingDir}`);
+    process.chdir(workingDir);
 
     log4js.configure({
         appenders: {
