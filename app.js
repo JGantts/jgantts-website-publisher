@@ -97,7 +97,6 @@ let initilize = async () => {
             key: fs.readFileSync(config.security.ssl.keyFile),
             cert: fs.readFileSync(config.security.ssl.certFile)
         }
-        config.security.sslOptions;
         const sslserver = https.createServer(sslOptions, httpsRedirectServer)
         await sslserver.listen(HTTP_PORT);
     }
@@ -124,10 +123,19 @@ let initilize = async () => {
             res.end();
         }
     })
-    await loadBalancer.listen(loadBalancerPort);
 
+    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+        let sslOptions = {
+            key: fs.readFileSync(config.security.ssl.keyFile),
+            cert: fs.readFileSync(config.security.ssl.certFile)
+        }
+        const sslserver = https.createServer(sslOptions, loadBalancer)
+        await sslserver.listen(loadBalancerPort);
+    } else {
+        await loadBalancer.listen(loadBalancerPort);
+    }
     logger.debug('Before privilege reduction.');
-
+    
     await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
