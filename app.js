@@ -255,7 +255,6 @@ let startWorker = async () => {
     let newWorker = await startWorkerPromise();
     logger.debug(`Worker ${newWorker.pid} fork.`);
     let port = await getPortPromise(newWorker);
-    logger.debug(`new port: ${port}`);
     let workerBody = {
         uuid: randomUUID(),
         worker: newWorker,

@@ -31,7 +31,7 @@ log4js.configure({
             }
         }
     },
-    categories: { default: { appenders: ["out"], level: "debug" } }
+    categories: { default: { appenders: ["publish", "out"], level: "debug" } }
 });
 const logger = log4js.getLogger();
 logger.level = "debug";
@@ -94,7 +94,7 @@ let initSite = async () => {
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
         process.chdir(logDir);
         logger.debug(`Node Site #${process.pid} starting.`);
-        site.start();
+        await site.start();
         process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
