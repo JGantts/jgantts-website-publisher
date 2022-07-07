@@ -128,7 +128,6 @@ let initilize = async () => {
 let loadBalancerHandler = async (req, res) => {
     if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
         if (!req.secure) {
-            logger.debug(res);
             res.redirect('https://' + req.headers.host + req.url);
         }
     }
