@@ -109,14 +109,14 @@ let initilize = async () => {
         }
     }).listen(listeningPort);
 
-    /*logger.debug('Before privilege reduction.');
+    logger.debug('Before privilege reduction.');
 
     process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
     }
-    logger.debug('After privilege reduction.');*/
+    logger.debug('After privilege reduction.');
 
     logger = log4js.getLogger();
 
