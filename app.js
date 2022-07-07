@@ -57,7 +57,7 @@ let initilize = async () => {
     });
 
     await changeOwnerToLeastPrivilegedUser(`${APP_NAME}.log`);
-    console.log(`Change to lpu ${APP_NAME}.log}`);
+    console.log(`Change to lpu ${APP_NAME}.log`);
 
     logger = log4js.getLogger();
     logger.level = "debug";
@@ -117,7 +117,7 @@ let initilize = async () => {
 
     logger.debug('Before privilege reduction.');
 
-    process.setuid(config.security.leastprivilegeduser);
+    await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
