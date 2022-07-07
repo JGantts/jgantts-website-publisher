@@ -81,12 +81,7 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-    let loadBalancerPort;
-
-    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
-        loadBalancerPort = 8080;
-    } else {
-        loadBalancerPort = HTTPS_PORT;
+    if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
         let httpsRedirectServer = await express();
         await httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
@@ -130,12 +125,12 @@ let initilize = async () => {
             cert: fs.readFileSync(config.security.ssl.certFile)
         }
         const sslserver = https.createServer(sslOptions, loadBalancer)
-        await sslserver.listen(loadBalancerPort);
+        await sslserver.listen(HTTPS_PORT);
     } else {
-        await loadBalancer.listen(loadBalancerPort);
+        await loadBalancer.listen(HTTP_PORT);
     }
     logger.debug('Before privilege reduction.');
-    
+
     await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
