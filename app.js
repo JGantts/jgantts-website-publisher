@@ -139,7 +139,7 @@ let initilize = async () => {
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
     return new Promise(async (resolve, reject) => {
-        logger.debug(`chown leastprivilegeduser ${siteDir}`);
+        console.log(`chown leastprivilegeduser ${siteDir}`);
         exec(
             `chown -R ${config.security.leastprivilegeduserUID}:${config.security.leastprivilegeduserGiID} "${path}"`,
             async function(error, stdout, stderr){
