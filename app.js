@@ -103,7 +103,7 @@ let initilize = async () => {
         let loadBalancer = await http.createServer(loadBalancerHandler);
         await loadBalancer.listen(HTTP_PORT);
     } else {
-        const sslLoadBalancer;
+        let sslLoadBalancer;
         try {
             let sslOptions = {
                 key: fs.readFileSync(config.security.ssl.keyFile),
