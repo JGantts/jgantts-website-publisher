@@ -9,6 +9,7 @@ The main intent is to publish a website.
 However I wanted smooth rollovers when publishig updates, so it launches a main process and four worker processes.
 The main process receives all incoming requests and forwards them to a random worker process;
 in effect, making this a simple load balancer.
+In addition, because HTTPS is desirable, the load balancer redirects all HTTP requests to HTTPS and also handles the SSL certs (see 'Security Considerations').
 
 ## Target Site
 
