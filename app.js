@@ -93,37 +93,16 @@ let initilize = async () => {
         await httpsRedirectServer.listen(HTTP_PORT);
     }
 
-    let loadBalancer = await http.createServer(function (req, res) {
-        if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
-            if (!req.secure) {
-                res.redirect('https://' + req.headers.host + req.url);
-            }
-        }
-        let keys = Object.keys(workerBodies);
-        if (keys.length > 0) {
-            let keyIndex = Math.floor(Math.random() * keys.length);
-            let workerBody = workerBodies[keys[keyIndex]];
-            let port = workerBody.port;
-            let target = {host: '127.0.0.1', port: port};
-            logger.debug(`port: ${port}`);
-            loadBalancerPoxy.web(req, res, { target });
-        } else {
-            res.writeHead(503, {'Content-Type': 'text/html'});
-            res.write("<p>503 Service Unavailable</p>");
-            res.write("<p>It's not you it's us.</p>");
-            res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
-            res.end();
-        }
-    })
 
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+        let loadBalancer = await http.createServer(loadBalancerHandler);
         await loadBalancer.listen(HTTP_PORT);
     } else {
         let sslOptions = {
             key: fs.readFileSync(config.security.ssl.keyFile),
             cert: fs.readFileSync(config.security.ssl.certFile)
         }
-        const sslserver = https.createServer(sslOptions, loadBalancer)
+        const sslserver = https.createServer(sslOptions, loadBalancerHandler)
         await sslserver.listen(HTTPS_PORT);
     }
 
@@ -145,6 +124,29 @@ let initilize = async () => {
 
     cron.schedule('* * * * *', checkStatusandVersion);
 };
+
+let loadBalancerHandler = async (req, res) => {
+    if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
+        if (!req.secure) {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
+    }
+    let keys = Object.keys(workerBodies);
+    if (keys.length > 0) {
+        let keyIndex = Math.floor(Math.random() * keys.length);
+        let workerBody = workerBodies[keys[keyIndex]];
+        let port = workerBody.port;
+        let target = {host: '127.0.0.1', port: port};
+        logger.debug(`port: ${port}`);
+        loadBalancerPoxy.web(req, res, { target });
+    } else {
+        res.writeHead(503, {'Content-Type': 'text/html'});
+        res.write("<p>503 Service Unavailable</p>");
+        res.write("<p>It's not you it's us.</p>");
+        res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
+        res.end();
+    }
+}
 
 let changeOwnerToLeastPrivilegedUser = async (path) => {
     return new Promise(async (resolve, reject) => {
