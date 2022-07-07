@@ -375,8 +375,8 @@ let checkVersion = async () => {
         }
 
         logger.debug(`Updating ${WEBSITE_NAME} module to @${highestVersion}`);
-        await fs.rm(installDir);
-        await fs.ensureDir(installDir);
+        await fs.rm(installDir, { recursive:true });
+        await fs.mkdir(installDir);
         exec(`npm cache clean --force`, async (error, stdout, stderr) => {
             logger.debug(stdout);
             logger.debug(stderr);
