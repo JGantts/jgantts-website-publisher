@@ -139,6 +139,8 @@ let loadBalancerHandler = async (req, res) => {
         let port = workerBody.port;
         if (!port) {
             logger.debug(`no port`);
+            logger.debug(keyIndex);
+            logger.debug(keys.length);
             logger.debug(workerBody);
             res.writeHead(500, {'Content-Type': 'text/html'});
             res.write(`<p>${WEBSITE_NAME_STYLE}</p>`);
