@@ -91,8 +91,6 @@ let initSite = async () => {
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
         process.chdir(logDir);
-        logger.debug(site);
-        logger.debug(site.start);
         logger.debug(`Node Site #${process.pid} starting.`);
         site.start();
         process.chdir(tempWorkindDir);
