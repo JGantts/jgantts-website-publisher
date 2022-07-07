@@ -72,18 +72,6 @@ let initilize = async () => {
     logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
     logger.debug(`NodeJS ${process.versions.node}`);
 
-    let checkVersionBeforeLaunch = false;
-
-    if (!(await fs.exists(installDir))) {
-        checkVersionBeforeLaunch = true;
-    }
-
-    if (checkVersionBeforeLaunch) {
-        await checkVersion();
-    } else {
-
-    }
-
     let port = process.env.PORT | 8080;
 
     loadBalancerPoxy = httpProxy.createProxyServer();
@@ -139,10 +127,16 @@ let initilize = async () => {
     logger.debug('After privilege reduction.');
     logger.debug(`I am ${process.getuid()}`);
 
-    await startWorkers();
+
+    if (!(await fs.exists(installDir))) {
+        checkVersionBeforeLaunch = true;
+    }
 
     if (checkVersionBeforeLaunch) {
+        await checkVersion();
+        await startWorkers();
     } else {
+        await startWorkers();
         await checkStatusandVersion();
     }
 
