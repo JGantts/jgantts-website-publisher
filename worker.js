@@ -85,11 +85,11 @@ let initSite = async () => {
 
         site = require(siteDir);
         process.on('message', receivedMessage);
-        let tempWorkindDir = process.cwd();
-        process.chdir(logDir);
+        //let tempWorkindDir = process.cwd();
+        //process.chdir(logDir);
         logger.debug(`Node Site #${process.pid} starting.`);
         site.start();
-        process.chdir(tempWorkindDir);
+        //process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
     } catch (err) {
         logger.debug(`Node Site #${process.pid} failed.`);
