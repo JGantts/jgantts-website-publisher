@@ -94,7 +94,7 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
     }
 
-    await (await http.createServer(function (req, res) {
+    let loadBalancer = await http.createServer(function (req, res) {
         if (!req.secure) {
             res.redirect('https://' + req.headers.host + req.url);
         }
@@ -113,7 +113,8 @@ let initilize = async () => {
             res.write("<p>Server may be booting.<br />Please try again in a few minutes.</p>");
             res.end();
         }
-    })).listen(listeningPort);
+    })
+    await loadBalancer.listen(listeningPort);
 
     logger.debug('Before privilege reduction.');
 
