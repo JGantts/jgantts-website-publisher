@@ -127,7 +127,7 @@ let initilize = async () => {
     logger.debug('After privilege reduction.');
     logger.debug(`I am ${process.getuid()}`);
 
-    if (!(await fs.exists(installDir)) {
+    if (!(await fs.exists(installDir))) {
         logger.debug(`checkVersion && startWorkers`);
         await checkVersion();
         await startWorkers();
