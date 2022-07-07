@@ -81,19 +81,16 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-    if (process.env.NODE_SITE_PUB_ENV !== 'dev') {
+
+    if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+    } else {
         let httpsRedirectServer = await express();
         await httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
         })
-        let sslOptions = {
-            key: fs.readFileSync(config.security.ssl.keyFile),
-            cert: fs.readFileSync(config.security.ssl.certFile)
-        }
-        const sslserver = https.createServer(sslOptions, httpsRedirectServer)
-        await sslserver.listen(HTTP_PORT);
+        await httpsRedirectServer.listen(HTTP_PORT);
     }
 
     let loadBalancer = await http.createServer(function (req, res) {
@@ -120,24 +117,24 @@ let initilize = async () => {
     })
 
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
+        await loadBalancer.listen(HTTP_PORT);
+    } else {
         let sslOptions = {
             key: fs.readFileSync(config.security.ssl.keyFile),
             cert: fs.readFileSync(config.security.ssl.certFile)
         }
         const sslserver = https.createServer(sslOptions, loadBalancer)
         await sslserver.listen(HTTPS_PORT);
-    } else {
-        await loadBalancer.listen(HTTP_PORT);
     }
-    logger.debug('Before privilege reduction.');
 
+    logger.debug('Before privilege reduction.');
     await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
     }
     logger.debug('After privilege reduction.');
-    console.log(`I am ${process.getuid()}`)
+    logger.debug(`I am ${process.getuid()}`)
 
 
     await fs.ensureDir(config.security.websitesDir);
