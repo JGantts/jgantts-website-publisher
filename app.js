@@ -116,14 +116,14 @@ let initilize = async () => {
     })
     await loadBalancer.listen(loadBalancerPort);
 
-    logger.debug('Before privilege reduction.');
+    /*logger.debug('Before privilege reduction.');
 
     await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
     }
-    logger.debug('After privilege reduction.');
+    logger.debug('After privilege reduction.');*/
 
 
     await fs.ensureDir(config.security.websitesDir);
