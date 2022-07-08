@@ -58,4 +58,4 @@ The target website is envisioned to
  - require a build process (TypeScript, React, what have you) and
  - be published on npm as a module
 
-(Technically the only requirement of the target is that you can `npm install` it, and that it implements the about API. But without a build process, this entire repo is overkill.)
+(Technically the only requirement of the target is that you can `npm install` it and that it implements the about API. But without a build process, this entire repo is overkill.)
