@@ -53,14 +53,10 @@ This means that the balancer has no way to route requests from the same user to 
  - **JGantts** - Jacob Gantt, the person
  - **jgantts-website-publisher** - this repo; the software in this repo; the npm-based website installer, updater, launcher, SSL handler, HTTPS redirect, load balancer, and a bit of a scant framework
  - **target (site)** - the singular website published and run by this jgantts-website-publisher software, currently only JGantts.com
- - **Next** - Lorum ipsum
 
 #### General
  - **heartbeat** - Very simple transaction between two applications, ensuring each of the other's 'has not crashed' status
  - **CentOS** - linux flavor
- - 
-
-
 
 ## Publisher-TargetWebsite API
 
