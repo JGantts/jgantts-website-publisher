@@ -8,7 +8,7 @@ I made it for myself; but I like writting flexible code so it should be useful f
 The main intent is to publish a website.
 However I wanted smooth rollovers when publishig updates, so it launches a main process and four worker processes.
 The main process receives all incoming requests and forwards them to a random worker process;
-in effect, making this a simple load balancer.
+in effect, making this a simple load balancer with four application servers.
 In addition, because HTTPS is desirable, the load balancer redirects all HTTP requests to HTTPS and also handles the SSL certs (see 'Security Considerations').
 
 ## Target Site
@@ -27,7 +27,13 @@ Result published at [JGantts.com](https://jgantts.com/)
 
 ## Security Considerations
 
-The setup script currently places the target website
+ - Currently the setup script for the CentOS VM places the target website's publish package files under /root/
+ - Currently the server launcher must be launched as root
+ - The server laucher does reduce privileges to a non-root user account before launching any application servers
+
+### Future Security Plans
+
+ - Stop using root and make another user account to run the SSL server under
 
 ## Method
 
