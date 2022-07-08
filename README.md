@@ -47,8 +47,15 @@ The API is as follows
 
 ## Environment
 
-This software was tested using a "blank" CentOS 7 64-bit image from namecheap's VPS package.
+This software was tested using a "blank" CentOS 7 64-bit image from namecheap's VPS package
 
+The install script uses Shell and assumes CentOS 7
 
+The publisher application is written in JavaScript using the NodeJS runtime
 
+The target website is envisioned to
+ - be a NodeJS app
+ - require a build process (TypeScript, React, what have you) and
+ - be published on npm as a module
 
+(Technically the only requirement of the target is that you can `npm install` it, and that it implements the about API. But without a build process, this entire repo is overkill.)
