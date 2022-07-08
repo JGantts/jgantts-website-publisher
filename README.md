@@ -80,7 +80,7 @@ This software was tested using a "blank" CentOS 7 64-bit image from namecheap's 
 
 The install script uses Shell and assumes CentOS 7
 
-The publisher application is written in JavaScript using the NodeJS runtime
+The publisher application is written in JavaScript and uses the NodeJS runtime
 
 The target website is envisioned to
  - be a NodeJS app
