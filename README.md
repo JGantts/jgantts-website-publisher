@@ -40,10 +40,15 @@ Result published at [JGantts.com](https://jgantts.com/)
 
 ## Method
 
-## API
-(between this publisher and the published website)
+## Publisher-TargetWebsite API
 
-The API is as follows
+The target website exposes itself as a nodejs module with these exported functions:
+
+- start(): boolean
+- port(): number
+- heartbeat(): boolean
+- shutdown(): boolean
+
 
 ## Environment
 
@@ -58,4 +63,4 @@ The target website is envisioned to
  - require a build process (TypeScript, React, what have you) and
  - be published on npm as a module
 
-(Technically the only requirement of the target is that you can `npm install` it and that it implements the about API. But without a build process, this entire repo is overkill.)
+(Technically the only requirement of the target is that you can `npm install` it and that it implements the above API. But without a build process, this entire repo is overkill.)
