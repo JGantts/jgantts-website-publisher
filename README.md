@@ -5,6 +5,9 @@
 This is my nodejs website publisher.
 I made it for myself; but I like writting flexible code so it should be useful for others with minimal modifications.
 
+LICENSE for both this publisher and the target website is GNU GPL v3.0;
+means do what you want excepting that, don't be a dolt, don't try to claim patents, and if you share it include your source and the diff and share under the same GNU GPL v3.0 license.
+
 The main intent is to publish a website.
 However I wanted smooth rollovers when publishig updates, so it launches a main process and four worker processes.
 The main process receives all incoming requests and forwards them to a random worker process;
