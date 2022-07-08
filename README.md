@@ -3,13 +3,13 @@
 ## Purpose
  
 This is my nodejs website publisher.
-I made it for myself; but I like writting flexible code so it should be useful for others with minimal modifications.
+I made it for myself; but I like writing flexible code so it should be useful for others with minimal modifications.
 
 LICENSE for both this publisher and the target website is GNU GPL v3.0;
 means do what you want excepting that, don't be a dolt, don't try to claim patents, and if you share it include your source and the diff and share under the same GNU GPL v3.0 license.
 
 The main intent is to publish a website.
-However I wanted smooth rollovers when publishig updates, so it launches a main process and four worker processes.
+However I wanted smooth rollovers when publishing updates, so it launches a main process and four worker processes.
 The main process receives all incoming requests and forwards them to a random worker process;
 in effect, making this a simple load balancer with four application servers.
 In addition, because HTTPS is desirable, the load balancer redirects all HTTP requests to HTTPS and also handles the SSL certs (see 'Security Considerations').
@@ -32,23 +32,30 @@ Result published at [JGantts.com](https://jgantts.com/)
 
  - Currently the setup script for the CentOS VM places the target website's publish package files under /root/
  - Currently the server launcher must be launched as root
- - The server laucher does reduce privileges to a non-root user account before launching any application servers
+ - The server launcher does reduce privileges to a non-root user account before launching any application servers
 
 ### Future Security Plans
 
  - Stop using root and make another user account to run the SSL server under
 
-## Method
+## Other Considerations
+
+Currently the load balancer has no type of cookies or user identifier.
+This means that the balancer has no way to route requests from the same user to the same worker/application server.
+
+## Method, Terminology
 
 ## Publisher-TargetWebsite API
 
 The target website exposes itself as a nodejs module with these exported functions:
 
-- start(): boolean
-- port(): number
-- heartbeat(): boolean
-- shutdown(): boolean
-
+- **start(): boolean** => launches website application server and returns success value
+    
+- **port(): number** => returns application server's port
+    
+- **heartbeat(): boolean** => returns true in under 100 miliseconds. Any other response, or lack of timely response, is considered a failed heartbeat
+    
+- **shutdown(): boolean** => closes website application server and returns success value
 
 ## Environment
 
