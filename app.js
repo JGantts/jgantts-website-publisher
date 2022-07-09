@@ -13,7 +13,8 @@ const path = require('path');
 const compareVersions = require('compare-versions');
 const config = require('./config').config;
 let workingDir = `/home/jgantts-website-publisher/working`;
-let installDir = `/home/jgantts-website-publisher/working/install`
+let installDir = `/home/jgantts-website-publisher/working/install`;
+const url = require('url');
 
 let workerBodies = new Object();
 
@@ -137,6 +138,7 @@ let initilize = async () => {
 
 let loadBalancerHandler = async (req, res) => {
     logger.debug(`loadBalancer ${req.url}`);
+    throw new Exception("Forced crash for test. Servics should return to normal momentarily.");
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
