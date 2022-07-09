@@ -81,32 +81,22 @@ let initilize = async () => {
     const HTTP_PORT = 80;
     const HTTPS_PORT = 443;
 
-
-    // if (process.env.NODE_SITE_PUB_ENV === 'dev') {
-    // } else {
-    //     let httpsRedirectServer = await express();
-    //     await httpsRedirectServer.get('/.well-known/pki-validation/7E166EFD1CA6C0A1EC8452A62671C9DC.txt', async function(req, res) {
-    //         let contents = await fs.readFile(`/keys/jgantts.com/7E166EFD1CA6C0A1EC8452A62671C9DC.txt`);
-    //         res.writeHead(200, {'Content-Type': "text/plain"});
-    //         res.write(contents);
-    //         res.end()
-    //     })
-    //     await httpsRedirectServer.get('*', function(req, res) {
-    //         if (!req.secure) {
-    //             res.redirect('https://' + req.headers.host + req.url);
-    //         }
-    //     })
-    //     await httpsRedirectServer.listen(HTTP_PORT);
-    // }
-
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
         let loadBalancer = await http.createServer(loadBalancerHandler);
-        await loadBalancer.listen(HTTP_PORT);
+        loadBalancer.listen(HTTP_PORT);
     } else {
+        let httpsRedirectServer = await express();
+        httpsRedirectServer.get('*', function(req, res) {
+            if (!req.secure) {
+                res.redirect('https://' + req.headers.host + req.url);
+            }
+        })
+        httpsRedirectServer.listen(HTTP_PORT);
         let sslLoadBalancer;
         try {
             let sslOptions = {
                 key: fs.readFileSync(config.security.ssl.keyFile),
+                ca: fs.readFileSync(config.security.ssl.caFile),
                 cert: fs.readFileSync(config.security.ssl.certFile)
             }
             sslLoadBalancer = http.createServer(sslOptions, loadBalancerHandler)
@@ -115,7 +105,7 @@ let initilize = async () => {
             sslLoadBalancer = http.createServer(loadBalancerHandler)
         }
         sslLoadBalancer = http.createServer(loadBalancerHandler)
-        await sslLoadBalancer.listen(HTTP_PORT);
+        sslLoadBalancer.listen(HTTPS_PORT);
     }
 
     logger.debug('Before privilege reduction.');
