@@ -82,10 +82,10 @@ let initilize = async () => {
     const HTTPS_PORT = 443;
 
     if (process.env.NODE_SITE_PUB_ENV === 'dev') {
-        let loadBalancer = await http.createServer(loadBalancerHandler);
+        let loadBalancer = http.createServer(loadBalancerHandler);
         loadBalancer.listen(HTTP_PORT);
     } else {
-        let httpsRedirectServer = await express();
+        let httpsRedirectServer = express();
         httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
@@ -104,7 +104,6 @@ let initilize = async () => {
             logger.debug(`Couldn't find key files`);
             sslLoadBalancer = http.createServer(loadBalancerHandler)
         }
-        sslLoadBalancer = http.createServer(loadBalancerHandler)
         sslLoadBalancer.listen(HTTPS_PORT);
     }
 
