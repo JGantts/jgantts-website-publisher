@@ -129,6 +129,7 @@ let initilize = async () => {
     logger.debug(`true ${true}`);
     logger.debug(`await fs.exists(installDir) ${await fs.exists(installDir)}`);
     logger.debug(`(await fs.readdir(installDir)) !== 0 ${(await fs.readdir(installDir)) !== 0}`);
+    logger.debug(`await fs.readdir(installDir) ${await fs.readdir(installDir)}`);
 
     if (goodInstallDir) {
         await startWorkers();
