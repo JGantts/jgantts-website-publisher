@@ -85,26 +85,40 @@ let initilize = async () => {
         let loadBalancer = http.createServer(loadBalancerHandler);
         loadBalancer.listen(HTTP_PORT);
     } else {
+        let sslOptions;
+        try {
+            sslOptions = {
+                key: fs.readFileSync(config.security.ssl.keyFile),
+                ca: fs.readFileSync(config.security.ssl.caFile),
+                cert: fs.readFileSync(config.security.ssl.certFile)
+            }
+        } catch (e) {
+            logger.debug(`Couldn't find key files`);
+            throw Error(`Couldn't find key files. Quitting`);
+        }
+
+
         let httpsRedirectServer = express();
         httpsRedirectServer.get('*', function(req, res) {
+            let query = url.parse(req.url, true);
+            logger.debug(`HTTP hit: ${query.pathname}`);
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
         })
         httpsRedirectServer.listen(HTTP_PORT);
-        let sslLoadBalancer;
         try {
             let sslOptions = {
                 key: fs.readFileSync(config.security.ssl.keyFile),
                 ca: fs.readFileSync(config.security.ssl.caFile),
                 cert: fs.readFileSync(config.security.ssl.certFile)
             }
-            sslLoadBalancer = http.createServer(sslOptions, loadBalancerHandler)
+            let sslLoadBalancer = http.createServer(sslOptions, loadBalancerHandler)
+            sslLoadBalancer.listen(HTTPS_PORT);
         } catch (e) {
             logger.debug(`Couldn't find key files`);
             sslLoadBalancer = http.createServer(loadBalancerHandler)
         }
-        sslLoadBalancer.listen(HTTPS_PORT);
     }
 
     logger.debug('Before privilege reduction.');
