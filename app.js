@@ -76,6 +76,38 @@ let initilize = async () => {
 
     loadBalancerPoxy = httpProxy.createProxyServer();
 
+    // Listen for the `error` event on `proxy`.
+    loadBalancerPoxy.on('error', function (err, req, res) {
+      res.writeHead(500, {
+        'Content-Type': 'text/plain'
+      });
+
+      res.end('Something went wrong. And we are reporting a custom error message.');
+    });
+
+    //
+    // Listen for the `proxyRes` event on `proxy`.
+    //
+    loadBalancerPoxy.on('proxyRes', function (proxyRes, req, res) {
+      logger.debug('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+    });
+
+    //
+    // Listen for the `open` event on `proxy`.
+    //
+    loadBalancerPoxy.on('open', function (proxySocket) {
+      // listen for messages coming FROM the target here
+      logger.debug('Client disconnected');
+    });
+
+    //
+    // Listen for the `close` event on `proxy`.
+    //
+    loadBalancerPoxy.on('close', function (res, socket, head) {
+      // view disconnected websocket connections
+      logger.debug('Client disconnected');
+    });
+
     const app = express();
 
     const HTTP_PORT = 80;
