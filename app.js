@@ -126,12 +126,13 @@ let initilize = async () => {
         (await fs.exists(installDir)) &&
         (await fsPromises.readdir(installDir)) !== 0;
 
-    logger.debug(`goodInstallDir ${goodInstallDir}`);
-    logger.debug(`true ${true}`);
-    logger.debug(`await fs.exists(installDir) ${await fs.exists(installDir)}`);
-    logger.debug(`(await fsPromises.readdir(installDir)) !== 0 ${(await fsPromises.readdir(installDir)) !== 0}`);
-    logger.debug(`await fsPromises.readdir(installDir) '${(await fsPromises.readdir(installDir))}'`);
+    logger.debug(`goodInstallDir '${goodInstallDir}'`);
+    logger.debug(`true '${true}'`);
+    logger.debug(`await fs.exists(installDir) '${await fs.exists(installDir)}'`);
+    logger.debug(`(await fsPromises.readdir(installDir)) !== 0 '${(await fsPromises.readdir(installDir)) !== 0}'`);
+    logger.debug(`(await fsPromises.readdir(installDir)) '${(await fsPromises.readdir(installDir))}'`);
     logger.debug(`fsPromises.readdir(installDir) '${fsPromises.readdir(installDir)}'`);
+    logger.debug(`installDir '${installDir)}'`);
 
     if (goodInstallDir) {
         await startWorkers();
