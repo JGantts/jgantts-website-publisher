@@ -13,8 +13,8 @@ const exec = require('child_process').exec;
 const path = require('path');
 const compareVersions = require('compare-versions');
 const config = require('./config').config;
-let workingDir = `/home/jgantts-website-publisher/working`;
-let installDir = `/home/jgantts-website-publisher/working/install`;
+let workingDir = `/home/jgantts-website-publisher/working/`;
+let installDir = `/home/jgantts-website-publisher/working/install/`;
 const url = require('url');
 
 let workerBodies = new Object();
