@@ -99,6 +99,7 @@ let initilize = async () => {
 
 
         let httpsRedirectServer = express();
+        httpsRedirectServer.enable('trust proxy')
         httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
