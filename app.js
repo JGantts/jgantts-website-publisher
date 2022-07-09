@@ -122,8 +122,8 @@ let initilize = async () => {
 
     let goodInstallDir =
         true &&
-        await fs.exists(installDir) &&
-        await fs.readdir(installDir) !== 0;
+        (await fs.exists(installDir)) &&
+        (await fs.readdir(installDir)) !== 0;
 
     if (goodInstallDir) {
         await startWorkers();
