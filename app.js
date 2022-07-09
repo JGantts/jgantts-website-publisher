@@ -138,7 +138,6 @@ let initilize = async () => {
 
 let loadBalancerHandler = async (req, res) => {
     logger.debug(`loadBalancer ${req.url}`);
-    throw new Exception("Forced crash for test. Servics should return to normal momentarily.");
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
