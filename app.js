@@ -146,6 +146,8 @@ let loadBalancerHandler = async (req, res) => {
     logger.debug(`\t${ipsString}`);
     logger.debug(`\t${JSON.stringify(req.ips)}`);
     logger.debug(`\t${JSON.stringify(req.headers)}`);
+    logger.debug((req.headers['x-forwarded-for'] || '').split(',')[0]
+        || req.connection.remoteAddress);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
