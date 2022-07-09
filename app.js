@@ -143,6 +143,7 @@ let loadBalancerHandler = async (req, res) => {
     }, ``);
     logger.debug(`HTTPS hit: ${query.pathname}`);
     logger.debug(`\t${ipsString}`);
+    logger.debug(`\t${JSON.stringify(req.ips)}`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
