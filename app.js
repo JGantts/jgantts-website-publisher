@@ -134,6 +134,10 @@ let initilize = async () => {
     logger.debug(`fsPromises.readdir(installDir) '${fsPromises.readdir(installDir)}'`);
     logger.debug(`installDir '${installDir}'`);
 
+    fsPromises.readdir(installDir, () => {
+        logger.debug(`read dir`);
+    });
+
     if (goodInstallDir) {
         await startWorkers();
         await checkStatusandVersion();
