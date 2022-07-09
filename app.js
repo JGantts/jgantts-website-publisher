@@ -157,7 +157,7 @@ let loadBalancerHandler = async (req, res) => {
             return;
         }
         let target = {host: '127.0.0.1', port: port};
-        logger.debug(`port: ${port}`);
+        logger.debug(`${workerBody.uuid} @${port}`);
         loadBalancerPoxy.web(req, res, { target });
     } else {
         res.writeHead(503, {'Content-Type': 'text/html'});
