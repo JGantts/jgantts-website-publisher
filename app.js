@@ -99,7 +99,6 @@ let initilize = async () => {
 
 
         let httpsRedirectServer = express();
-        httpsRedirectServer.enable('trust proxy');
         httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
@@ -108,7 +107,6 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
 
         const httpsLoadBalancerApp = express();
-        httpsLoadBalancerApp.enable('trust proxy');
         httpsLoadBalancerApp.get('/*', loadBalancerHandler);
         https.createServer(sslOptions, httpsLoadBalancerApp).listen(HTTPS_PORT);
     }
@@ -140,11 +138,9 @@ let initilize = async () => {
 let loadBalancerHandler = async (req, res) => {
     let query = url.parse(req.url, true);
     let ipsString = req.ips.reduce((total, curr) => {
-        return `${total}${curr} `;
-    }, ``);
     logger.debug(`HTTPS hit: ${query.pathname}`);
     logger.debug(`\t${req.connection.remoteAddress}`);
-    logger.debug(req.connection);
+    logger.debug(`\t${req.socket.remoteAddress}`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
