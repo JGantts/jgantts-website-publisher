@@ -1,7 +1,6 @@
 # jgantts-website-publisher
  
 ## Purpose
- 
 This is my nodejs website publisher.
 I made it for myself; but I like writing flexible code so it should be useful for others with minimal modifications.
 
@@ -15,7 +14,6 @@ in effect, making this a simple load balancer with four application servers.
 In addition, because HTTPS is desirable, the load balancer redirects all HTTP requests to HTTPS and also handles the SSL certs (see 'Security Considerations').
 
 ## Target Site
-
 This software currently targets the JGantts.com website.
 
 Source hosted at [github.com/JGantts/jgantts.com/](https://github.com/JGantts/jgantts.com/)
@@ -29,23 +27,21 @@ Result published at [JGantts.com](https://jgantts.com/)
 (Currently awaiting DNS propagation. IP is [199.192.16.176](http://199.192.16.176/))
 
 ## Security Considerations
-
  - Currently the setup script for the CentOS VM places the target website's publish package files under /root/
  - Currently the server launcher must be launched as root
  - The server launcher does reduce privileges to a non-root user account before launching any application servers
 
 ### Future Security Plans
-
  - Stop using root and make another user account to run the SSL server under
 
 ## Other Considerations
-
 Currently the load balancer has no type of cookies or user identifier.
 This means that the balancer has no way to route requests from the same user to the same worker/application server.
 
 ## Method, Terminology
 
 ### Method
+
 
 ### Terminology
 
@@ -57,9 +53,9 @@ This means that the balancer has no way to route requests from the same user to 
 #### General
  - **heartbeat** - Very simple transaction between two applications, ensuring each of the other's 'has not crashed' status
  - **CentOS** - linux flavor
+ - **Application Server** - The "final" sever which hosts the application (website)
 
 ## Publisher-TargetWebsite API
-
 The target website exposes itself as a nodejs module with these exported functions:
 
 - **start(): boolean** => launches website application server and returns success value
@@ -71,7 +67,6 @@ The target website exposes itself as a nodejs module with these exported functio
 - **shutdown(): boolean** => closes website application server and returns success value
 
 ## Environment
-
 This software was tested using a "blank" CentOS 7 64-bit image from namecheap's VPS package
 
 The install script uses Shell and assumes CentOS 7
