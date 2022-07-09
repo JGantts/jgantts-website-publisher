@@ -3,6 +3,7 @@ const log4js = require('log4js');
 const randomUUID = require('uuid').v4;
 const cron = require('node-cron');
 const fsSync = require('fs');
+const fsPromises = require('fs').promises;
 const express = require('express');
 const http = require('http');
 const https = require('https');
@@ -122,14 +123,15 @@ let initilize = async () => {
 
     let goodInstallDir =
         true &&
-        (await fs.exists(installDir)) &&
-        (await fs.readdir(installDir)) !== 0;
+        (await fsPromises.exists(installDir)) &&
+        (await fsPromises.readdir(installDir)) !== 0;
 
     logger.debug(`goodInstallDir ${goodInstallDir}`);
     logger.debug(`true ${true}`);
-    logger.debug(`await fs.exists(installDir) ${await fs.exists(installDir)}`);
-    logger.debug(`(await fs.readdir(installDir)) !== 0 ${(await fs.readdir(installDir)) !== 0}`);
-    logger.debug(`await fs.readdir(installDir) '${await fs.readdir(installDir)}'`);
+    logger.debug(`await fsPromises.exists(installDir) ${await fsPromises.exists(installDir)}`);
+    logger.debug(`(await fsPromises.readdir(installDir)) !== 0 ${(await fsPromises.readdir(installDir)) !== 0}`);
+    logger.debug(`await fsPromises.readdir(installDir) '${await fsPromises.readdir(installDir)}'`);
+    logger.debug(`fsPromises.readdir(installDir) '${fsPromises.readdir(installDir)}'`);
 
     if (goodInstallDir) {
         await startWorkers();
