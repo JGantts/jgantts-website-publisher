@@ -106,7 +106,9 @@ let initilize = async () => {
         })
         httpsRedirectServer.listen(HTTP_PORT);
 
-        let httpsLoadBalencer = https.createServer(sslOptions, app);
+        const httpsLoadBalencerApp = express();
+        let httpsLoadBalencer = https.createServer(sslOptions, httpsLoadBalencerApp);
+        httpsLoadBalencer.get('/*', loadBalancerHandler);
         httpsLoadBalencer.listen(HTTPS_PORT);
     }
 
