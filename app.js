@@ -106,10 +106,10 @@ let initilize = async () => {
         })
         httpsRedirectServer.listen(HTTP_PORT);
 
-        const httpsLoadBalencerApp = express();
-        let httpsLoadBalencer = https.createServer(sslOptions, httpsLoadBalencerApp);
-        httpsLoadBalencer.get('/*', loadBalancerHandler);
-        httpsLoadBalencer.listen(HTTPS_PORT);
+        const httpsLoadBalancerApp = express();
+        httpsLoadBalancerApp.get('/*', loadBalancerHandler);
+        let httpsLoadBalancer = https.createServer(sslOptions, httpsLoadBalancerApp);
+        httpsLoadBalancer.listen(HTTPS_PORT);
     }
 
     logger.debug('Before privilege reduction.');
