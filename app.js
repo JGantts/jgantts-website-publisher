@@ -139,9 +139,11 @@ let initilize = async () => {
 let loadBalancerHandler = async (req, res) => {
     let query = url.parse(req.url, true);
     logger.debug(`HTTPS hit: ${query.pathname}`);
-    logger.debug(`\t${req.ips.reduce(total, curr) => {
-        return `${total}${curr} `; 
-    }}`);
+    logger.debug(`\t${
+        req.ips.reduce((total, curr) => {
+            return `${total}${curr} `;
+        }, ``)
+    }`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
