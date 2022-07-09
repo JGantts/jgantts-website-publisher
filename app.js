@@ -99,7 +99,6 @@ let initilize = async () => {
 
 
         let httpsRedirectServer = express();
-        httpsRedirectServer.enable('trust proxy')
         httpsRedirectServer.get('*', function(req, res) {
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
@@ -108,9 +107,9 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
 
         const httpsLoadBalancerApp = express();
+        httpsLoadBalancerApp.enable('trust proxy')
         httpsLoadBalancerApp.get('/*', loadBalancerHandler);
-        let httpsLoadBalancer = https.createServer(sslOptions, httpsLoadBalancerApp);
-        httpsLoadBalancer.listen(HTTPS_PORT);
+        https.createServer(sslOptions, httpsLoadBalancerApp).listen(HTTPS_PORT);
     }
 
     await process.setuid(config.security.leastprivilegeduser);
