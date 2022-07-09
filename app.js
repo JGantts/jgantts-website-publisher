@@ -124,14 +124,14 @@ let initilize = async () => {
     let goodInstallDir =
         true &&
         (await fs.exists(installDir)) &&
-        (await fsPromises.readdir(installDir)) !== 0;
+        (await fsPromises.readdir(installDir)).length !== 0;
 
     logger.debug(`goodInstallDir '${goodInstallDir}'`);
     logger.debug(`true '${true}'`);
     logger.debug(`await fs.exists(installDir) '${await fs.exists(installDir)}'`);
-    logger.debug(`(await fsPromises.readdir(installDir)) !== 0 '${(await fsPromises.readdir(installDir)) !== 0}'`);
-    logger.debug(`(await fsPromises.readdir(installDir)) '${(await fsPromises.readdir(installDir))}'`);
-    logger.debug(`fsPromises.readdir(installDir) '${fsPromises.readdir(installDir)}'`);
+    logger.debug(`(await fsPromises.readdir(installDir)).length !== 0 '${(await fsPromises.readdir(installDir)).length !== 0}'`);
+    logger.debug(`(await fsPromises.readdir(installDir)).length '${(await fsPromises.readdir(installDir)).length}'`);
+    logger.debug(`fsPromises.readdir(installDir).length '${fsPromises.readdir(installDir).length}'`);
     logger.debug(`installDir '${installDir}'`);
 
     fsPromises.readdir(installDir, () => {
