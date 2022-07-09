@@ -113,24 +113,25 @@ let initilize = async () => {
         httpsLoadBalancer.listen(HTTPS_PORT);
     }
 
-    logger.debug('Before privilege reduction.');
     await process.setuid(config.security.leastprivilegeduser);
     if (process.getuid() === 0){
         logger.debug('failed to reduce privilege. Quitting');
         throw Error('failed to reduce privilege. Quitting');
     }
-    logger.debug('After privilege reduction.');
     logger.debug(`I am ${process.getuid()}`);
 
-    if (!(await fs.exists(installDir))) {
-        logger.debug(`checkVersion && startWorkers`);
+    let goodInstallDir =
+        true &&
+        await fs.exists(installDir) &&
+        await fs.readdir(installDir) !== 0;
+
+    if (goodInstallDir) {
+        await startWorkers();
+        await checkStatusandVersion();
+    } else {
         await fs.mkdir(installDir);
         await checkVersion();
         await startWorkers();
-    } else {
-        logger.debug(`startWorkers && checkStatusandVersion`);
-        await startWorkers();
-        await checkStatusandVersion();
     }
 
     cron.schedule('* * * * *', checkStatusandVersion);
