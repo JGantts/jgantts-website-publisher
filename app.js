@@ -137,7 +137,6 @@ let initilize = async () => {
 
 let loadBalancerHandler = async (req, res) => {
     logger.debug(`HTTPS hit: ${req.url}`);
-    logger.debug(`\t${req.connection.remoteAddress}`);
     logger.debug(`\t${req.socket.remoteAddress}`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
