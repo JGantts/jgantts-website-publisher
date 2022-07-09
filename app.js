@@ -100,8 +100,6 @@ let initilize = async () => {
 
         let httpsRedirectServer = express();
         httpsRedirectServer.get('*', function(req, res) {
-            let query = url.parse(req.url, true);
-            logger.debug(`HTTP hit: ${query.pathname}`);
             if (!req.secure) {
                 res.redirect('https://' + req.headers.host + req.url);
             }
@@ -139,7 +137,9 @@ let initilize = async () => {
 };
 
 let loadBalancerHandler = async (req, res) => {
-    logger.debug(`loadBalancer ${req.url}`);
+    let query = url.parse(req.url, true);
+    logger.debug(`HTTPS hit: ${query.pathname}`);
+    logger.debug(`\t${query.ips}`);
     let keys = Object.keys(workerBodies);
     if (keys.length > 0) {
         let keyIndex = Math.floor(Math.random() * keys.length);
