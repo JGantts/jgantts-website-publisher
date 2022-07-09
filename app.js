@@ -86,21 +86,6 @@ let initilize = async () => {
     });
 
     //
-    // Listen for the `proxyRes` event on `proxy`.
-    //
-    loadBalancerPoxy.on('proxyRes', function (proxyRes, req, res) {
-      logger.debug('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
-    });
-
-    //
-    // Listen for the `open` event on `proxy`.
-    //
-    loadBalancerPoxy.on('open', function (proxySocket) {
-      // listen for messages coming FROM the target here
-      logger.debug('Client disconnected');
-    });
-
-    //
     // Listen for the `close` event on `proxy`.
     //
     loadBalancerPoxy.on('close', function (res, socket, head) {
