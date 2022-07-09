@@ -74,7 +74,7 @@ let initilize = async () => {
     logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
     logger.debug(`NodeJS ${process.versions.node}`);
 
-    loadBalancerPoxy = httpProxy.createProxyServer();
+    loadBalancerPoxy = httpProxy.createProxyServer({ secure: true });
 
     // Listen for the `error` event on `proxy`.
     loadBalancerPoxy.on('error', function (err, req, res) {
