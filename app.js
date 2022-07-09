@@ -72,8 +72,6 @@ let initilize = async () => {
     logger.debug(`Node Load Balancer is running. PID: ${process.pid}`);
     logger.debug(`NodeJS ${process.versions.node}`);
 
-    let port = process.env.PORT | 8080;
-
     loadBalancerPoxy = httpProxy.createProxyServer();
 
     const app = express();
@@ -107,18 +105,9 @@ let initilize = async () => {
             }
         })
         httpsRedirectServer.listen(HTTP_PORT);
-        try {
-            let sslOptions = {
-                key: fs.readFileSync(config.security.ssl.keyFile),
-                ca: fs.readFileSync(config.security.ssl.caFile),
-                cert: fs.readFileSync(config.security.ssl.certFile)
-            }
-            let sslLoadBalancer = http.createServer(sslOptions, loadBalancerHandler)
-            sslLoadBalancer.listen(HTTPS_PORT);
-        } catch (e) {
-            logger.debug(`Couldn't find key files`);
-            sslLoadBalancer = http.createServer(loadBalancerHandler)
-        }
+
+        let httpsLoadBalencer = https.createServer(sslOptions, app);
+        httpsLoadBalencer.listen(HTTPS_PORT);
     }
 
     logger.debug('Before privilege reduction.');
