@@ -82,7 +82,8 @@ let initSite = async () => {
     logger.debug(`Node Site #${process.pid} initializing.`);
     try {
         await fs.copy(installDir, siteDir);
-        await fs.copy(websiteConfigDir, siteDir);
+        logger.debug(path.resolve(websiteConfigDir));
+        //await fs.copy(websiteConfigDir, siteDir);
 
         logger.debug(`cwd: ${process.cwd()}`);
         //await install(siteDir);
