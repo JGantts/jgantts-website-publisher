@@ -392,6 +392,12 @@ let checkVersion = () => {
                     //so grooss
                     await fs.copy(`${installDir}/node_modules/jgantts.com/`, `${installDir}/`);
                     await fs.rm(`${installDir}/node_modules/jgantts.com/`, { recursive:true });
+
+                    //await fs.copy(websiteConfigDir, `${installDir}/`);
+
+                    logger.debug(path.resolve(websiteConfigDir));
+
+
                     logger.debug(`Done updating ${WEBSITE_NAME} module`);
                     logger.debug(stdout);
                     logger.debug(stderr);
