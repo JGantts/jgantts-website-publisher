@@ -16,6 +16,7 @@ const config = require('./config').config;
 let workingDir = `/home/jgantts-website-publisher/working/`;
 let installDir = `/home/jgantts-website-publisher/working/install/`;
 const url = require('url');
+let websiteConfigDir = `./website_config/`;
 
 let workerBodies = new Object();
 
@@ -393,9 +394,10 @@ let checkVersion = () => {
                     await fs.copy(`${installDir}/node_modules/jgantts.com/`, `${installDir}/`);
                     await fs.rm(`${installDir}/node_modules/jgantts.com/`, { recursive:true });
 
-                    //await fs.copy(websiteConfigDir, `${installDir}/`);
-
                     logger.debug(path.resolve(websiteConfigDir));
+
+                    await fs.copy(websiteConfigDir, `${installDir}/`);
+
 
 
                     logger.debug(`Done updating ${WEBSITE_NAME} module`);
