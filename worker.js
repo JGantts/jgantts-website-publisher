@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const randomUUID = require('uuid').v4;
 const exec = require('child_process').exec;
 const config = require('./config').config;
+let websiteConfigDir = `./website_config/`;
 let workingDir = `/home/jgantts-website-publisher/working`;
 let installDir = `/home/jgantts-website-publisher/working/install`
 const path = require('path');
@@ -81,6 +82,7 @@ let initSite = async () => {
     logger.debug(`Node Site #${process.pid} initializing.`);
     try {
         await fs.copy(installDir, siteDir);
+        await fs.copy(websiteConfigDir, siteDir);
 
         logger.debug(`cwd: ${process.cwd()}`);
         //await install(siteDir);
