@@ -16,7 +16,7 @@ const config = require('./config').config;
 let workingDir = `/home/jgantts-website-publisher/working/`;
 let installDir = `/home/jgantts-website-publisher/working/install/`;
 const url = require('url');
-let websiteConfigDir = `./website_config/`;
+let websiteConfigDir = `/website_config/`;
 
 let workerBodies = new Object();
 
