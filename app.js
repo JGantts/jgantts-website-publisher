@@ -31,6 +31,7 @@ const APP_NAME = "jgantts-website-publisher"
 const WEBSITE_NAME = 'jgantts.com'
 const WEBSITE_NAME_STYLE = 'JGantts.com'
 const WORKER_TOTAL = 4;
+let forceDeploy = false;
 let logger;
 let loadBalancerPoxy;
 
@@ -125,6 +126,12 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
 
         const httpsLoadBalancerApp = express();
+        httpsLoadBalancerApp.get(`admin/${config.security.adminSecret}/force-redeploy/`, () => {
+            forceDeploy = true;
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write("<p>Redeploying</p>");
+            res.end();
+        });
         httpsLoadBalancerApp.get('/*', loadBalancerHandler);
         https.createServer(sslOptions, httpsLoadBalancerApp).listen(HTTPS_PORT);
     }
@@ -353,31 +360,34 @@ let checkVersion = () => {
             if (res.error) { console.error(res.message); return; }
             else if (!res.continue) { console.error(res.message); return; }
 
-            const packageMatadata = res.data
-            let versionsMetadata = packageMatadata.versions
-            let highestVersion = null;
-            for(var version in versionsMetadata) {
-                if(highestVersion === null) {
-                    highestVersion = version;
-                } else {
-                    if (compareVersions(highestVersion, version) <= 0) {
+            if (!forceDeploy) {
+                const packageMatadata = res.data
+                let versionsMetadata = packageMatadata.versions
+                let highestVersion = null;
+                for(var version in versionsMetadata) {
+                    if(highestVersion === null) {
                         highestVersion = version;
+                    } else {
+                        if (compareVersions(highestVersion, version) <= 0) {
+                            highestVersion = version;
+                        }
+                    }
+                }
+
+                let packageFile = `${installDir}/package.json`;
+
+                if (fsSync.existsSync(packageFile)) {
+                    const packageFileSting = (await fs.readFile(packageFile)).toString();
+                    const packageFileJson = JSON.parse(packageFileSting);
+                    const installedVersion = packageFileJson.version;
+                    if (compareVersions(installedVersion, highestVersion) >= 0) {
+                        logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
+                        resolve();
+                        return;
                     }
                 }
             }
-
-            let packageFile = `${installDir}/package.json`;
-
-            if (fsSync.existsSync(packageFile)) {
-                const packageFileSting = (await fs.readFile(packageFile)).toString();
-                const packageFileJson = JSON.parse(packageFileSting);
-                const installedVersion = packageFileJson.version;
-                if (compareVersions(installedVersion, highestVersion) >= 0) {
-                    logger.debug(`${WEBSITE_NAME} is already up-to-date @${highestVersion}.`);
-                    resolve();
-                    return;
-                }
-            }
+            forceDeploy = false;
 
             logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
             await fs.rm(installDir, { recursive:true });
