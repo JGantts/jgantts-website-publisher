@@ -130,6 +130,7 @@ let initilize = async () => {
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write("<p>Redeploying</p>");
             res.end();
+            forceDeploy = true;
             checkStatusandVersion();
         });
         httpsLoadBalancerApp.get('/*', loadBalancerHandler);
