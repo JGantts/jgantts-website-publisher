@@ -398,8 +398,10 @@ let checkVersion = () => {
                 exec(`cd ${installDir} && npm install ${WEBSITE_NAME}@${highestVersion}`, async (error, stdout, stderr) => {
                     logger.debug(stdout);
                     logger.debug(stderr);
+                    logger.debug(`Copying package: ${installDir}/package.json`);
                     await fs.rm(`${installDir}/package.json`);
                     await fs.rm(`${installDir}/package-lock.json`);
+                    logger.debug(`Done copying packages`);
                     //so grooss
                     await fs.copy(`${installDir}/node_modules/jgantts.com/`, `${installDir}/`);
                     await fs.rm(`${installDir}/node_modules/jgantts.com/`, { recursive:true });
