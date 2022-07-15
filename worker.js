@@ -93,7 +93,7 @@ let initSite = async () => {
         logger.debug(`Node Site #${process.pid} starting.`);
         logger.debug(`${siteDir}`)
         site = require('./');
-        logger.debug(`site: ${site}`);
+        logger.debug(`site: ${JSON.stringify(site)}`);
         logger.debug(`cwd: ${process.cwd()}`);
         process.chdir(logDir);
         logger.debug(`cwd: ${process.cwd()}`);
