@@ -126,7 +126,7 @@ let initilize = async () => {
         httpsRedirectServer.listen(HTTP_PORT);
 
         const httpsLoadBalancerApp = express();
-        httpsLoadBalancerApp.get(`admin/${config.security.adminSecret}/force-redeploy/`, () => {
+        httpsLoadBalancerApp.get(`/admin/${config.security.adminSecret}/force-redeploy/`, () => {
             forceDeploy = true;
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write("<p>Redeploying</p>");
