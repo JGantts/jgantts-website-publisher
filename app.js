@@ -386,10 +386,12 @@ let checkVersion = () => {
                         return;
                     }
                 }
+                logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
+            } else {
+                logger.debug(`Redeploying ${WEBSITE_NAME}`);
             }
             forceDeploy = false;
 
-            logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
             await fs.rm(installDir, { recursive:true });
             await fs.mkdir(installDir);
             exec(`npm cache clean --force`, async (error, stdout, stderr) => {
