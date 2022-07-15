@@ -360,22 +360,22 @@ let checkVersion = () => {
             if (res.error) { console.error(res.message); return; }
             else if (!res.continue) { console.error(res.message); return; }
 
-            if (!forceDeploy) {
-                const packageMatadata = res.data
-                let versionsMetadata = packageMatadata.versions
-                let highestVersion = null;
-                for(var version in versionsMetadata) {
-                    if(highestVersion === null) {
+            const packageMatadata = res.data
+            let versionsMetadata = packageMatadata.versions
+            let highestVersion = null;
+            for(var version in versionsMetadata) {
+                if(highestVersion === null) {
+                    highestVersion = version;
+                } else {
+                    if (compareVersions(highestVersion, version) <= 0) {
                         highestVersion = version;
-                    } else {
-                        if (compareVersions(highestVersion, version) <= 0) {
-                            highestVersion = version;
-                        }
                     }
                 }
+            }
 
-                let packageFile = `${installDir}/package.json`;
+            let packageFile = `${installDir}/package.json`;
 
+            if (!forceDeploy) {
                 if (fsSync.existsSync(packageFile)) {
                     const packageFileSting = (await fs.readFile(packageFile)).toString();
                     const packageFileJson = JSON.parse(packageFileSting);
@@ -386,12 +386,10 @@ let checkVersion = () => {
                         return;
                     }
                 }
-                logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
-            } else {
-                logger.debug(`Redeploying ${WEBSITE_NAME}`);
             }
             forceDeploy = false;
 
+            logger.debug(`Updating ${WEBSITE_NAME} to @${highestVersion}`);
             await fs.rm(installDir, { recursive:true });
             await fs.mkdir(installDir);
             exec(`npm cache clean --force`, async (error, stdout, stderr) => {
