@@ -127,10 +127,10 @@ let initilize = async () => {
 
         const httpsLoadBalancerApp = express();
         httpsLoadBalancerApp.get(`/admin/${config.security.adminSecret}/force-redeploy/`, (req, res) => {
-            forceDeploy = true;
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write("<p>Redeploying</p>");
             res.end();
+            checkStatusandVersion();
         });
         httpsLoadBalancerApp.get('/*', loadBalancerHandler);
         https.createServer(sslOptions, httpsLoadBalancerApp).listen(HTTPS_PORT);
