@@ -92,9 +92,9 @@ let initSite = async () => {
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
         process.chdir(logDir);
         logger.debug(`Node Site #${process.pid} starting.`);
+        site = require(await fs.realpath(siteDir));
         siteDir = fs.realpath(siteDir);
         logger.debug(`cwd: ${process.cwd()}`);
-        site = require(await fs.realpath(siteDir));
         await site.start();
         process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
