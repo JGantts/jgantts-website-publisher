@@ -90,11 +90,11 @@ let initSite = async () => {
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
-        process.chdir(logDir);
         logger.debug(`Node Site #${process.pid} starting.`);
         logger.debug(`${siteDir}`)
         site = require(siteDir);
-        siteDir = fs.realpath(siteDir);
+        logger.debug(`cwd: ${process.cwd()}`);
+        process.chdir(logDir);
         logger.debug(`cwd: ${process.cwd()}`);
         await site.start();
         process.chdir(tempWorkindDir);
