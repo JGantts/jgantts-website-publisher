@@ -93,7 +93,6 @@ let initSite = async () => {
         logger.debug(`Node Site #${process.pid} starting.`);
         logger.debug(`${siteDir}`)
 
-        console.log(await fs.readFile(`${siteDir}/package.json`, { encoding: "utf-8" }))
         site = require(await fs.realpath(siteDir));
         logger.debug(`site: ${JSON.stringify(site)}`);
         logger.debug(`cwd: ${process.cwd()}`);
