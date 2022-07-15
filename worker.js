@@ -83,17 +83,17 @@ let initSite = async () => {
         await fs.copy(installDir, siteDir);
         await fs.copy(`${siteDir}/config.js`, `${logDir}/config.js`);
 
-        logger.debug(`cwd: ${process.cwd()}`);
         //await install(siteDir);
 
         //logger.debug(fs.existsSync(siteDir));
         logger.debug(`Node Site #${process.pid} loading.`);
-        site = require(await fs.realpath(siteDir));
         process.on('message', receivedMessage);
         let tempWorkindDir = process.cwd();
         logger.debug(`tempWorkindDir: ${tempWorkindDir}`);
         process.chdir(logDir);
         logger.debug(`Node Site #${process.pid} starting.`);
+        logger.debug(`cwd: ${process.cwd()}`);
+        site = require(await fs.realpath(siteDir));
         await site.start();
         process.chdir(tempWorkindDir);
         logger.debug(`Node Site #${process.pid} started.`);
