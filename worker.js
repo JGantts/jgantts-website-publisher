@@ -93,8 +93,8 @@ let initSite = async () => {
         logger.debug(`Node Site #${process.pid} starting.`);
         logger.debug(`${siteDir}`)
 
-        site = require(siteDir);
         console.log(fs.contents(`${siteDir}/package.json`))
+        site = require(siteDir);
         logger.debug(`site: ${JSON.stringify(site)}`);
         logger.debug(`cwd: ${process.cwd()}`);
         process.chdir(logDir);
