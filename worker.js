@@ -94,7 +94,7 @@ let initSite = async () => {
         logger.debug(`${siteDir}`)
 
         site = require('./');
-        console.log(await fs.readFile('package.json'));
+        console.log(await fs.readFile('./package.json'));
         logger.debug(`site: ${JSON.stringify(site)}`);
         logger.debug(`cwd: ${process.cwd()}`);
         process.chdir(logDir);
